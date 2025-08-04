@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../data/entry_provider.dart';
 import '../data/entry.dart';
-import 'sorted_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -26,17 +25,6 @@ Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Add Entries'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.sort),
-            onPressed: () {
-              Navigator.push(
-                context, 
-                MaterialPageRoute(builder: (_)=> const SortedPage()),
-              );
-            },
-          )
-        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
