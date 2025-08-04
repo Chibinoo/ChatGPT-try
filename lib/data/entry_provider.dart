@@ -1,18 +1,24 @@
 import 'package:flutter/material.dart';
 import 'entry.dart';
+import 'package:hive/hive.dart';
 
 class EntryProvider with ChangeNotifier {
-  final List<Entry> _entries=[];
+  final Box<Entry> _box=Hive.box<Entry>('entries');
 
-  List<Entry> get entries => _entries;
+  List<Entry> get entries => _box.values.toList();
 
   void addEntry(Entry entry){
-    _entries.add(entry);
+    _box.add(entry);
     notifyListeners();
   }
 
   void clearEntries(){
-    _entries.clear();
+    _box.clear();
+    notifyListeners();
+  }
+
+  void deleteEntry(int index){
+    _box.deleteAt(index);
     notifyListeners();
   }
 }

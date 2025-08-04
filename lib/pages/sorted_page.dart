@@ -1,64 +1,49 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/data/entry_provider.dart';
 import 'package:provider/provider.dart';
-import '../data/entry_provider.dart';
-import '../data/entry.dart';
 
-class SortedPage extends StatefulWidget {
+class SortedPage extends StatelessWidget {
   const SortedPage({super.key});
 
   @override
-  State<SortedPage> createState() => _SortedPageState();
-}
-
-class _SortedPageState extends State<SortedPage> {
-  String _selectedSort = 'priority';
-
-  List<Entry> _sortEnteries(List<Entry> entries){
-    final sorted=List<Entry>.from(entries);
-    if(_selectedSort=='priority'){
-      sorted.sort((a,b)=>a.priority.compareTo(b.priority));
-    }else if(_selectedSort=='date'){
-      sorted.sort((a,b)=>a.date.compareTo(b.date));
-    }else if(_selectedSort=='titel'){
-      sorted.sort((a,b)=>a.title.compareTo(b.title));
-    }
-    return sorted;
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final entries =Provider.of<EntryProvider>(context).entries;
-    final sortedEnteries=_sortEnteries(entries);
+    final entryProvider=Provider.of<EntryProvider>(context);
+    final sortedEntries=[...entryProvider.entries]
+    ..sort((a,b)=>b.priority.compareTo(a.priority));
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Sorted Entries'),
-        actions: [
-          DropdownButton<String>(
-            value: _selectedSort,
-            dropdownColor: Colors.white,
-            onChanged: (value) {
-              setState(() =>_selectedSort=value!);
-            },
-            items: const[
-              DropdownMenuItem(value:'priority', child:Text('Priority')),
-              DropdownMenuItem(value:'date', child:Text('Date')),
-              DropdownMenuItem(value:'titel', child:Text('Titel')),
-            ],
-          )
-        ],
-      ),
-      body: ListView.builder(
-        itemCount: sortedEnteries.length,
-        itemBuilder: (context, index) {
-          final entry=sortedEnteries[index];
-          return ListTile(
-            title: Text(entry.title),
-            subtitle: Text(
-              'Date: ${entry.date.toLocal()}| Priority: ${entry.priority}'),
-          );
-        }
-      ),
+      appBar: AppBar(title: const Text('Sorted Entries')),
+      body: sortedEntries.isEmpty
+        ?const Center(child: Text('No entreis yet.'))
+        :ListView.builder(
+          itemCount: sortedEntries.length,
+          itemBuilder: (context, index){
+            final entry=sortedEntries[index];
+
+            return Dismissible(
+              key: ValueKey(entry.date.toIso8601String()),
+              direction: DismissDirection.endToStart,
+              background: Container(
+                color: Colors.red,
+                alignment: Alignment.centerRight,
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: const Icon(Icons.delete, color: Colors.white)
+              ), 
+              onDismissed: (_){
+                final originalIndex=entryProvider.entries.indexOf(entry);
+                entryProvider.deleteEntry(originalIndex);
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Delet"${entry.title}"')),
+                );
+              },
+              child: ListTile(
+                title: Text(entry.title),
+                subtitle: Text('Priority: ${entry.priority} \n${entry.date.toLocal()}'),
+              ),
+            );
+          }
+        )
     );
   }
 }
