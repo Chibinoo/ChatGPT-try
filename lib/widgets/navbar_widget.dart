@@ -20,7 +20,8 @@ class _NavbarWidgetState extends State<NavbarWidget> {
           backgroundColor: Colors.blueGrey,
           destinations: [
             NavigationDestination(icon: Icon(Icons.checklist), label: 'Entries'),
-            NavigationDestination(icon: Icon(Icons.list), label: 'Stats')
+            NavigationDestination(icon: Icon(Icons.list), label: 'Days'),
+            NavigationDestination(icon: Icon(Icons.bar_chart_rounded), label: 'Stats')
           ],
           onDestinationSelected: (int value) {
             setState(() {

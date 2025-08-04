@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/data/notifiers.dart';
 import 'package:flutter_application_1/pages/home_page.dart';
 import 'package:flutter_application_1/pages/sorted_page.dart';
+import 'package:flutter_application_1/pages/stats_page.dart';
 import 'package:flutter_application_1/widgets/navbar_widget.dart';
 
 List<Widget> pages=[
   HomePage(),
-  SortedPage()
+  SortedPage(),
+  StatsPage()
 ];
 
 class WidgetTree extends StatelessWidget {
