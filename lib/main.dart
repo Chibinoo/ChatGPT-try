@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/widgets/widget_tree.dart';
 import 'package:provider/provider.dart';
-import 'entry_provider.dart';
-import 'home_page.dart';
+import 'data/entry_provider.dart';
 
 void main() {
   runApp(
@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Entries App',
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: const HomePage(),
+      home: const WidgetTree(),
     );
   }
 }

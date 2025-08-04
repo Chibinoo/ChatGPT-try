@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'entry_provider.dart';
-import 'entry.dart';
+import '../data/entry_provider.dart';
+import '../data/entry.dart';
 import 'sorted_page.dart';
 
 class HomePage extends StatefulWidget {
