@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/data/entry_provider.dart';
+import 'package:flutter_application_1/themes/theme_provider.dart';
 import 'package:provider/provider.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -7,7 +9,6 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final entryProvider = Provider.of<EntryProvider>(context);
     
     return Scaffold(
       appBar: AppBar(title: Text('Settings')),
@@ -19,7 +20,7 @@ class SettingsPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  'Storage Mode,',
+                  'Storage Mode',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 10),
@@ -71,8 +72,22 @@ class SettingsPage extends StatelessWidget {
                     ),
                     const Text('Cloud Storage'),
                   ],
+                ),
+                const Text(
+                  'Theme',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    CupertinoSwitch(
+                      value: Provider.of<ThemeProvider>(context).isDarkMode, 
+                      onChanged: (value)=>Provider.of<ThemeProvider>(context, listen: false).toggelTheme(),
+                    )
+                  ],
                 )
-              ],
+              ]
             );
           }
         ),

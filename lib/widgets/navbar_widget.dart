@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/data/notifiers.dart';
+import 'package:flutter_application_1/themes/theme_provider.dart';
+import 'package:provider/provider.dart';
 
 class NavbarWidget extends StatefulWidget {
   const NavbarWidget({super.key});
@@ -12,12 +14,15 @@ class _NavbarWidgetState extends State<NavbarWidget> {
   int selectedIndex=0;
   @override
   Widget build(BuildContext context) {
+    return Consumer<ThemeProvider>(
+    builder: (context, themeProvider, child) {
+        final isDark = themeProvider.isDarkMode;
     return ValueListenableBuilder(
       valueListenable: selectedPageNotifier, 
       builder: (context, selectedPage, child){
         return NavigationBar(
-          indicatorColor: Colors.white,
-          backgroundColor: Colors.blueGrey,
+          indicatorColor: isDark ? Colors.grey[800] : Colors.white,
+          backgroundColor: isDark ? Colors.black : Colors.blueGrey,
           destinations: [
             NavigationDestination(icon: Icon(Icons.edit_note_sharp), label: 'Entries'),
             NavigationDestination(icon: Icon(Icons.list), label: 'Days'),
@@ -30,7 +35,9 @@ class _NavbarWidgetState extends State<NavbarWidget> {
           },
           selectedIndex: selectedPage,
         );
-      }
+      },
+    );
+  },
     );
   }
 }

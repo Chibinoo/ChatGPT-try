@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/data/entry.dart';
+import 'package:flutter_application_1/themes/theme_provider.dart';
 import 'package:flutter_application_1/widgets/widget_tree.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
@@ -19,8 +20,13 @@ void main() async{
   await entryProvider.init();
 
   runApp(
-    ChangeNotifierProvider.value(
-      value: entryProvider,
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider.value(
+          value: entryProvider,
+        ),
+        ChangeNotifierProvider.value(value: ThemeProvider())
+      ],
       child: const MyApp(),
     ),
   );
@@ -31,11 +37,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return Consumer<ThemeProvider>(
+      builder: (context, themeProvider, _) {
     return  MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Entries App',
-      theme: ThemeData(primarySwatch: Colors.blue),
+      theme: themeProvider.isDarkMode
+            ?ThemeData.dark()
+            :ThemeData.light(),
       home: const WidgetTree(),
     );
-  }
+  },
+    );
+}
 }

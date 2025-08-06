@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/data/entry_provider.dart';
 import 'package:flutter_application_1/pages/settings_page.dart';
+import 'package:flutter_application_1/themes/theme_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
@@ -46,9 +47,12 @@ class _SortedPageState extends State<SortedPage> {
       ),
       body: Column(
         children: [
+          Consumer<ThemeProvider>(
+            builder: (context, themeProvider, child) {
+            final isDark = themeProvider.isDarkMode;
           //date filter buttons
-          Container(
-            color: Colors.blueGrey[200],
+          return Container(
+            color: isDark ? Colors.grey[900] : Colors.blueGrey[200],
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Row(
               children: [
@@ -80,6 +84,8 @@ class _SortedPageState extends State<SortedPage> {
                 ),
               ],
             ),
+          );
+            },
           ),
           //filtered entries list
           Expanded(
