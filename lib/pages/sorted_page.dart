@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/data/entry_provider.dart';
+import 'package:flutter_application_1/pages/settings_page.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
@@ -26,7 +27,23 @@ class _SortedPageState extends State<SortedPage> {
     ..sort((a,b)=>b.priority.compareTo(a.priority));//sort by priority
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Sorted Entries')),
+      appBar: AppBar(
+        title: const Text('Sorted Entries'),
+        actions: [
+          IconButton(
+            onPressed: (){
+              Navigator.push(
+                context, 
+                MaterialPageRoute(builder: (context){
+                    return SettingsPage();
+                  }
+                )
+              );
+            }, 
+            icon: Icon(Icons.settings)
+          )
+        ],
+      ),
       body: Column(
         children: [
           //date filter buttons

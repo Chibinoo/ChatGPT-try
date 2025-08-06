@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/data/entry_provider.dart';
+import 'package:flutter_application_1/pages/settings_page.dart';
 import 'package:provider/provider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../data/entry.dart';
@@ -17,7 +18,23 @@ class StatsPage extends StatelessWidget {
       priorityCount[entry.priority]=(priorityCount[entry.priority]??0)+1;
     }
     return Scaffold(
-      appBar: AppBar(title: const Text('Statistics')),
+      appBar: AppBar(
+        title: const Text('Statistics'),
+        actions: [
+          IconButton(
+            onPressed: (){
+              Navigator.push(
+                context, 
+                MaterialPageRoute(builder: (context){
+                    return SettingsPage();
+                  }
+                )
+              );
+            }, 
+            icon: Icon(Icons.settings)
+          )
+        ],
+      ),
       body: Center(
         child: entries.isEmpty
         ? const Text('No data to display yet')

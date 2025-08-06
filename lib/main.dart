@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/data/entry.dart';
 import 'package:flutter_application_1/widgets/widget_tree.dart';
@@ -7,14 +8,19 @@ import 'data/entry_provider.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
-
+  //init cloud save
+  await Firebase.initializeApp();
+//init local save
   await Hive.initFlutter();
   Hive.registerAdapter(EntryAdapter());
   await Hive.openBox<Entry>('entries');
 
+  final entryProvider=EntryProvider();
+  await entryProvider.init();
+
   runApp(
-    ChangeNotifierProvider(
-      create: (_)=>EntryProvider(),
+    ChangeNotifierProvider.value(
+      value: entryProvider,
       child: const MyApp(),
     ),
   );
