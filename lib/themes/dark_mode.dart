@@ -5,8 +5,6 @@ ThemeData darkMode=ThemeData(
     surface: Colors.blueGrey.shade900,
     primary: Colors.blueGrey.shade600,
     secondary: Colors.blueGrey.shade700,
-    tertiary: Colors.blueGrey.shade800,
-    inversePrimary: Colors.blueGrey.shade300,
     secondaryContainer: Colors.amber[700], // <--- Set your desired chip selected color
     error: Colors.red[400]!,
   ),
@@ -14,5 +12,8 @@ ThemeData darkMode=ThemeData(
     backgroundColor: Colors.grey[800]!,
     selectedColor: Colors.amber[700]!,
     labelStyle: TextStyle(color: Colors.white),
+  ),
+  bottomNavigationBarTheme: BottomNavigationBarThemeData( // NavigationBar background
+    backgroundColor: Colors.blueGrey.shade700,
   ),
 );

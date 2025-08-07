@@ -11,33 +11,33 @@ class NavbarWidget extends StatefulWidget {
 }
 
 class _NavbarWidgetState extends State<NavbarWidget> {
-  int selectedIndex=0;
+  int selectedIndex = 0;
   @override
   Widget build(BuildContext context) {
     return Consumer<ThemeProvider>(
-    builder: (context, themeProvider, child) {
-        final isDark = themeProvider.isDarkMode;
-    return ValueListenableBuilder(
-      valueListenable: selectedPageNotifier, 
-      builder: (context, selectedPage, child){
-        return NavigationBar(
-          indicatorColor: isDark ? Colors.grey[800] : Colors.white,
-          backgroundColor: isDark ? Colors.black : Colors.blueGrey,
-          destinations: [
-            NavigationDestination(icon: Icon(Icons.edit_note_sharp), label: 'Entries'),
-            NavigationDestination(icon: Icon(Icons.list), label: 'Days'),
-            NavigationDestination(icon: Icon(Icons.bar_chart_rounded), label: 'Stats')
-          ],
-          onDestinationSelected: (int value) {
-            setState(() {
-              selectedPageNotifier.value=value;
-            });
+      builder: (context, themeProvider, child) {
+        final theme = Theme.of(context);
+        return ValueListenableBuilder(
+          valueListenable: selectedPageNotifier,
+          builder: (context, selectedPage, child) {
+            return NavigationBar(
+              indicatorColor: theme.colorScheme.secondaryContainer,
+              backgroundColor: theme.bottomNavigationBarTheme.backgroundColor, // <-- use this
+              destinations: const [
+                NavigationDestination(icon: Icon(Icons.edit_note_sharp), label: 'Entries'),
+                NavigationDestination(icon: Icon(Icons.list), label: 'Days'),
+                NavigationDestination(icon: Icon(Icons.bar_chart_rounded), label: 'Stats')
+              ],
+              onDestinationSelected: (int value) {
+                setState(() {
+                  selectedPageNotifier.value = value;
+                });
+              },
+              selectedIndex: selectedPage,
+            );
           },
-          selectedIndex: selectedPage,
         );
       },
-    );
-  },
     );
   }
 }
