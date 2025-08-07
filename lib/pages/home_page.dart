@@ -115,7 +115,7 @@ Widget build(BuildContext context) {
               style: ElevatedButton.styleFrom(
                 backgroundColor: theme.colorScheme.secondaryContainer,
                 foregroundColor: Provider.of<ThemeProvider>(context).isDarkMode
-                    ? Colors.amber[700] // or any color for dark mode
+                    ? Colors.white // or any color for dark mode
                     : Colors.black,     // or any color for light mode
               ),
               onPressed: () {
