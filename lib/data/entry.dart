@@ -13,5 +13,13 @@ class Entry {
   @HiveField(2)
   final int priority;
   
-  Entry({required this.title, required this.date, required this.priority});
+  @HiveField(3)
+  final String category;
+
+  Entry({
+    required this.title, 
+    required this.date, 
+    required this.priority,
+    this.category='Other'
+  });
 }

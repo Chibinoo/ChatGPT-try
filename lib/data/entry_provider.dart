@@ -38,7 +38,8 @@ class EntryProvider with ChangeNotifier {
           date: data['date'] is Timestamp
             ? (data['date'] as Timestamp).toDate()
             : DateTime.parse(data['date'].toString()),
-          priority: data['priority']
+          priority: data['priority'],
+          category: data['category']??'Other'
         );
       }).toList();
     } else{
@@ -54,6 +55,7 @@ class EntryProvider with ChangeNotifier {
         'title':entry.title,
         'priority':entry.priority,
         'date':entry.date.toIso8601String(),
+        'category':entry.category
       });
     } else{
       await _localBox.add(entry);
