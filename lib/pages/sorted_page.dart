@@ -60,7 +60,7 @@ class _SortedPageState extends State<SortedPage> {
                       child: ChoiceChip(
                         label: Text(cat),
                         selected: isSelected,
-                        selectedColor: theme.colorScheme.primaryContainer,
+                        selectedColor: theme.colorScheme.secondaryContainer,
                         onSelected: (_) {
                           setState(() => _selectedCategory = cat);
                         },

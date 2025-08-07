@@ -42,9 +42,7 @@ class MyApp extends StatelessWidget {
     return  MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Entries App',
-      theme: themeProvider.isDarkMode
-            ?ThemeData.dark()
-            :ThemeData.light(),
+      theme: themeProvider.themeData, // <-- use your provider's theme
       home: const WidgetTree(),
     );
   },
