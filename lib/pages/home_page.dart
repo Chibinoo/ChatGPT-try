@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/themes/theme_provider.dart';
 import 'package:provider/provider.dart';
 import '../data/entry_provider.dart';
 import '../data/entry.dart';
@@ -26,9 +27,12 @@ class _HomePageState extends State<HomePage> {
     }
 @override
 Widget build(BuildContext context) {
+  final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Add Entries'),
+        backgroundColor: theme.appBarTheme.backgroundColor,
+        foregroundColor: theme.appBarTheme.foregroundColor,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -97,6 +101,9 @@ Widget build(BuildContext context) {
                 return ChoiceChip(
                   label: Text(cat), 
                   selected: isSelected,
+                  selectedColor: theme.colorScheme.secondaryContainer,
+                  backgroundColor: theme.chipTheme.backgroundColor,
+                  labelStyle: theme.chipTheme.labelStyle,
                   onSelected: (_){
                     setState(()=>_selectedCategory=cat);
                   },
@@ -105,16 +112,21 @@ Widget build(BuildContext context) {
             ),
             const Spacer(),
             ElevatedButton(
-              onPressed: (){
-                final entry=Entry(
-                  title: _titleControler.text, 
-                  date: _selectedDate, 
+              style: ElevatedButton.styleFrom(
+                backgroundColor: theme.colorScheme.secondaryContainer,
+                foregroundColor: Provider.of<ThemeProvider>(context).isDarkMode
+                    ? Colors.amber[700] // or any color for dark mode
+                    : Colors.black,     // or any color for light mode
+              ),
+              onPressed: () {
+                final entry = Entry(
+                  title: _titleControler.text,
+                  date: _selectedDate,
                   priority: _priority.round(),
-                  category: _selectedCategory
+                  category: _selectedCategory,
                 );
                 Provider.of<EntryProvider>(context, listen: false).addEntry(entry);
-                //Navigator.pop(context);
-              }, 
+              },
               child: const Text('Add Entry'),
             ),
           ],
