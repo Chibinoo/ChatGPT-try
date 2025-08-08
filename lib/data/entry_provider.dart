@@ -92,7 +92,8 @@ Future<void> _mergeLocalToCloud()async{
       await _firestore.add({
         'title':entry.title,
         'priority':entry.priority,
-        'date':entry.date
+        'date':entry.date,
+        'category':entry.category
       });
     }
   }
@@ -107,7 +108,8 @@ Future<void> _mergeCloudToLocal()async{
       date: data['date'] is Timestamp
         ? (data['date'] as Timestamp).toDate()
         : DateTime.parse(data['date'].toString()), 
-      priority: data['priority']
+      priority: data['priority'],
+      category: data['category']
     );
   }).toList();
   final localEntries=_localBox.values.toList();
