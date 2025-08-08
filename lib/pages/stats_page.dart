@@ -17,87 +17,96 @@ class StatsPage extends StatelessWidget {
     for (Entry entry in entries){
       priorityCount[entry.priority]=(priorityCount[entry.priority]??0)+1;
     }
+    //count categories
+    Map<String, int> categoryCounts={};
+    for(var e in entries){
+      categoryCounts[e.category]=(categoryCounts[e.category]??0)+1;
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Statistics'),
         actions: [
-          IconButton(
-            onPressed: (){
-              Navigator.push(
-                context, 
-                MaterialPageRoute(builder: (context){
-                    return SettingsPage();
-                  }
-                )
-              );
-            }, 
-            icon: Icon(Icons.settings)
-          )
-        ],
+              IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SettingsPage()),
+                  );
+                },
+                icon: const Icon(Icons.settings),
+              ),
+            ],
       ),
-      body: Center(
-        child: entries.isEmpty
-        ? const Text('No data to display yet')
-        :Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              const Text('Entries per priority',style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
-              const SizedBox(height: 20,),
-              Expanded(
-                child: BarChart(
-                  BarChartData(
-                    alignment: BarChartAlignment.spaceAround,
-                    maxY: (priorityCount.values.isEmpty
-                    ? 1
-                    :priorityCount.values.reduce((a,b)=>a>b?a:b))+1,
-                    barTouchData: BarTouchData(enabled: true),
-                    titlesData: FlTitlesData(
-                      leftTitles: const AxisTitles(
-                        sideTitles: SideTitles(
-                          showTitles: true,
-                          interval: 1,  
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            const Text(
+              'Entries per priority',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 10),
+            SizedBox(
+              height: 200,
+              child: BarChart(
+                BarChartData(
+                  barGroups: priorityCount.entries.map((entry){
+                    final priority=entry.key;
+                    return BarChartGroupData(
+                      x: entry.key,
+                      barRods: [
+                        BarChartRodData(
+                          toY: entry.value.toDouble(),
+                          color: _getPriorityColor(priority)
                         ),
-                      ),
-                      rightTitles: const AxisTitles(
-                        sideTitles: SideTitles(showTitles: false)
-                      ),
-                      topTitles: const AxisTitles(
-                        sideTitles: SideTitles(showTitles: false)
-                      ),
-                      bottomTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                          showTitles: true,
-                          getTitlesWidget: (value, meta) {
-                            return Text(
-                              value.toInt().toString(),
-                              style: const TextStyle(fontSize: 14),
-                            );
-                          },
-                        ),
+                      ],
+                    );
+                  }).toList(),
+                  titlesData: FlTitlesData(
+                    bottomTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        getTitlesWidget: (value, _) => Text(value.toInt().toString()),
                       ),
                     ),
-                    gridData: const FlGridData(show: false),
-                    borderData: FlBorderData(show: false),
-                    barGroups: priorityCount.entries.map((e) {
-                      final priority=e.key;
-                      final count=e.value;
-                      return BarChartGroupData(
-                        x:priority,
-                        barRods:[
-                          BarChartRodData(
-                            toY: count.toDouble(),
-                            color: _getPriorityColor(priority),
-                            width: 20,
-                          ),
-                        ],
-                      );
-                    }).toList(),
+                    leftTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        interval: 1
+                      ),
+                    ),
+                    rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 30),
+            const Text(
+              'Category Distribution',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(
+              height: 250,
+              child: PieChart(
+                PieChartData(
+                  sections: categoryCounts.entries.map((entry){
+                    final percentage=(entry.value/entries.length)*100;
+                    return PieChartSectionData(
+                      value: entry.value.toDouble(),
+                      title: '${entry.key}\n${percentage.toStringAsFixed(1)}%',
+                      radius: 80,
+                      color: _getCategoryColor(entry.key),
+                      titleStyle: const TextStyle(fontSize: 14,fontWeight: FontWeight.bold, color: Colors.white),
+                    );
+                  }).toList(),
+                  sectionsSpace: 2,
+                  centerSpaceRadius: 30,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -115,6 +124,20 @@ class StatsPage extends StatelessWidget {
       return Colors.red;
       default:
       return Colors.grey;
+    }
+  }
+  //helper for category colors
+  Color _getCategoryColor(String category){
+    switch(category){
+      case 'Work':
+        return Colors.blue;
+      case 'Hobby':
+        return Colors.green;
+      case 'Personal':
+        return Colors.orange;
+      case 'Other':
+      default:
+        return Colors.grey;
     }
   }
 }
