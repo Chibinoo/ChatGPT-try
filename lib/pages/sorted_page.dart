@@ -3,6 +3,7 @@ import 'package:flutter_application_1/data/entry.dart';
 import 'package:flutter_application_1/data/entry_provider.dart';
 import 'package:flutter_application_1/pages/settings_page.dart';
 import 'package:flutter_application_1/themes/theme_provider.dart';
+import 'package:flutter_application_1/widgets/image_widget.dart';
 import 'package:provider/provider.dart';
 
 class SortedPage extends StatefulWidget {
@@ -87,6 +88,7 @@ class _SortedPageState extends State<SortedPage> {
                         );
                       },
                       child: ListTile(
+                        leading: ImageWidget(path:entry.imagePath),
                         title: Text(
                           entry.title,
                           style: theme.textTheme.titleMedium,

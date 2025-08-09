@@ -111,7 +111,7 @@ class StatsPage extends StatelessWidget {
       ),
     );
   }
-  //color based on priority
+  //helper for priority colors
   static Color _getPriorityColor(int priority){
     switch(priority){
       case 1:

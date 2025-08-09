@@ -39,7 +39,8 @@ class EntryProvider with ChangeNotifier {
             ? (data['date'] as Timestamp).toDate()
             : DateTime.parse(data['date'].toString()),
           priority: data['priority'],
-          category: data['category']??'Other'
+          category: data['category']??'Other',
+          imagePath: data['image']
         );
       }).toList();
     } else{
@@ -55,7 +56,8 @@ class EntryProvider with ChangeNotifier {
         'title':entry.title,
         'priority':entry.priority,
         'date':entry.date.toIso8601String(),
-        'category':entry.category
+        'category':entry.category,
+        'image':entry.imagePath
       });
     } else{
       await _localBox.add(entry);
@@ -83,7 +85,8 @@ Future<void> _mergeLocalToCloud()async{
       date: data['date'] is Timestamp
         ? (data['date'] as Timestamp).toDate()
         : DateTime.parse(data['date'].toString()), 
-      priority: data['priority']
+      priority: data['priority'],
+      imagePath: data['image']
     );
   }).toList();
   //for each local entry missing in cloud, upload it
@@ -93,7 +96,8 @@ Future<void> _mergeLocalToCloud()async{
         'title':entry.title,
         'priority':entry.priority,
         'date':entry.date,
-        'category':entry.category
+        'category':entry.category,
+        'image':entry.imagePath
       });
     }
   }
@@ -109,7 +113,8 @@ Future<void> _mergeCloudToLocal()async{
         ? (data['date'] as Timestamp).toDate()
         : DateTime.parse(data['date'].toString()), 
       priority: data['priority'],
-      category: data['category']
+      category: data['category'],
+      imagePath: data['image']
     );
   }).toList();
   final localEntries=_localBox.values.toList();
@@ -143,5 +148,10 @@ bool _containsEntry(List<Entry> list, Entry entry){
     e.date.year==entry.date.year&&
     e.date.month==entry.date.month&&
     e.date.day==entry.date.day);
+}
+bool isCloudMode=false;
+void switchMode(bool cloud){
+  isCloudMode=cloud;
+  notifyListeners();
 }
 }
