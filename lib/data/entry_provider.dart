@@ -154,4 +154,30 @@ void switchMode(bool cloud){
   isCloudMode=cloud;
   notifyListeners();
 }
+
+//steak system
+int get streakCount{
+  if(entries.isEmpty) return 0;
+  //get unique dates
+  final uniqueDates=entries.map((e)=>DateTime(e.date.year, e.date.month, e.date.day)).toSet().toList()
+  ..sort((a,b)=>b.compareTo(a));//newest first
+  int streak=1;
+  DateTime currentDay=uniqueDates.first;
+
+  for(int i=1;i<uniqueDates.length;i++){
+    final difference=currentDay.difference(uniqueDates[i]).inDays;
+    if(difference==1){
+      streak++;
+      currentDay=uniqueDates[i];
+    }else{
+      break;//streak broken
+    }
+  }
+  //if no entry today, streak is 0
+  if(uniqueDates.first!=DateTime.now().toLocal().subtract(const Duration(days: 0))&&
+  uniqueDates.first!=DateTime.now()){
+    streak=0;
+  }
+  return streak;
+}
 }

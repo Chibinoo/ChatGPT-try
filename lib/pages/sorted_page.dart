@@ -4,6 +4,7 @@ import 'package:flutter_application_1/data/entry_provider.dart';
 import 'package:flutter_application_1/pages/settings_page.dart';
 import 'package:flutter_application_1/themes/theme_provider.dart';
 import 'package:flutter_application_1/widgets/image_widget.dart';
+import 'package:flutter_application_1/widgets/streak_widget.dart';
 import 'package:provider/provider.dart';
 
 class SortedPage extends StatefulWidget {
@@ -49,6 +50,8 @@ class _SortedPageState extends State<SortedPage> {
           ),
           body: Column(
             children: [
+              const SizedBox(height: 10),
+              StreakWidget(),
               const SizedBox(height: 10),
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,

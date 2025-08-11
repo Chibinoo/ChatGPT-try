@@ -90,6 +90,7 @@ Widget build(BuildContext context) {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
+            //text
             TextField(
               controller: _titleControler,
               decoration: const InputDecoration(labelText: 'Titel'),
@@ -127,6 +128,7 @@ Widget build(BuildContext context) {
             const SizedBox(height: 10),
             Row(
               children: [
+                //date
                 const Text('Date:'),
                 const SizedBox(width: 10),
                 TextButton(
@@ -147,6 +149,7 @@ Widget build(BuildContext context) {
             ),
             const SizedBox(height: 10),
             Wrap(
+              //categories
               spacing: 10,
               children: _categories.map((cat){
                 final isSelected=cat==_selectedCategory;
@@ -168,19 +171,21 @@ Widget build(BuildContext context) {
               Image.file(_selectedImage!,height: 150,fit: BoxFit.cover,),
 
             Row(
+              //add image
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 IconButton(
-                  icon: const Icon(Icons.camera_alt),
+                  icon: const Icon(Icons.camera_alt, size: 50),
                   onPressed: ()=>_pickImage(ImageSource.camera), 
                 ),
                 IconButton(
-                  icon: const Icon(Icons.photo),
+                  icon: const Icon(Icons.photo, size: 50),
                   onPressed: ()=>_pickImage(ImageSource.gallery), 
                 ),
               ],
             ),
             const Spacer(),
+            //save
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: theme.colorScheme.secondaryContainer,
