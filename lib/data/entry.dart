@@ -5,16 +5,16 @@ part 'entry.g.dart';
 @HiveType(typeId: 0)
 class Entry {
   @HiveField(0)
-  final String title;
+  late String title;
 
   @HiveField(1)
   final DateTime date;
 
   @HiveField(2)
-  final int priority;
+  late int priority;
   
   @HiveField(3)
-  final String category;
+  late String category;
 
   @HiveField(4)
   String? imagePath;
@@ -46,4 +46,6 @@ class Entry {
       imagePath: map['imagePath'],
     );
   }
+
+  Future<void> save() async {}
 }

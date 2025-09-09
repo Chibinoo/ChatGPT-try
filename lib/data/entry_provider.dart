@@ -180,4 +180,66 @@ int get streakCount{
   }
   return streak;
 }
+
+  get sortedEntries {
+  // ignore: unnecessary_null_comparison
+  if (_entries == null) return [];
+  final list = List<Entry>.from(_entries);
+  list.sort((a, b) => b.priority.compareTo(a.priority));
+  return list;
+}
+
+/// Save changes to an existing entry (local or cloud)
+Future<void> saveEntry(Entry entry) async {
+  if (useCloud) {
+    // Find the document in Firestore by matching title and date
+    final snapshot = await _firestore
+        .where('title', isEqualTo: entry.title)
+        .where('date', isEqualTo: entry.date.toIso8601String())
+        .get();
+
+    if (snapshot.docs.isNotEmpty) {
+      final docId = snapshot.docs.first.id;
+      await _firestore.doc(docId).update({
+        'title': entry.title,
+        'priority': entry.priority,
+        'date': entry.date.toIso8601String(),
+        'category': entry.category,
+        'image': entry.imagePath,
+      });
+    }
+  } else {
+    // For Hive, just call save() on the entry (if it's a HiveObject)
+    await entry.save();
+  }
+  await loadEntries();
+  notifyListeners();
+}
+
+/// Update an existing entry (local or cloud)
+Future<void> updateEntry(Entry entry) async {
+  if (useCloud) {
+    // Find the document in Firestore by matching title and date
+    final snapshot = await _firestore
+        .where('title', isEqualTo: entry.title)
+        .where('date', isEqualTo: entry.date.toIso8601String())
+        .get();
+
+    if (snapshot.docs.isNotEmpty) {
+      final docId = snapshot.docs.first.id;
+      await _firestore.doc(docId).update({
+        'title': entry.title,
+        'priority': entry.priority,
+        'date': entry.date.toIso8601String(),
+        'category': entry.category,
+        'image': entry.imagePath,
+      });
+    }
+  } else {
+    // For Hive, just call save() on the entry (if it's a HiveObject)
+    await entry.save();
+  }
+  await loadEntries();
+  notifyListeners();
+}
 }
