@@ -19,6 +19,7 @@ class SettingsPage extends StatelessWidget {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                //Storage Mode
                 const Text(
                   'Storage Mode',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
@@ -73,6 +74,7 @@ class SettingsPage extends StatelessWidget {
                     const Text('Cloud Storage'),
                   ],
                 ),
+                //Theme
                 const Text(
                   'Theme',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
@@ -86,6 +88,47 @@ class SettingsPage extends StatelessWidget {
                       onChanged: (value)=>Provider.of<ThemeProvider>(context, listen: false).toggelTheme(),
                     )
                   ],
+                ),
+                const SizedBox(height: 10),
+                //Clear Entries
+                const Text(
+                  'Clear Entries',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 10),
+                ElevatedButton.icon(
+                  icon: const Icon(Icons.delete_forever),
+                  label: const Text('Delete All Entries'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                  ),
+                  onPressed: ()async{
+                    final confirm=await showDialog<bool>(
+                      context: context, 
+                      builder: (ctx)=>AlertDialog(
+                        title: const Text('Confirm Deletion'),
+                        content: const Text('Are you sure you want to delet ALL entries?'),
+                        actions: [
+                          TextButton(
+                            onPressed: ()=>Navigator.of(ctx).pop(false), 
+                            child: const Text('Cancel')
+                          ),
+                          ElevatedButton(
+                            onPressed: ()=>Navigator.of(ctx).pop(true),
+                            child: const Text('Delete')
+                          )
+                        ],
+                      ),
+                    );
+                    if (confirm==true){
+                      provider.clearAllEntries();
+                      // ignore: use_build_context_synchronously
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('All entries have been deleted')),
+                      );
+                    }
+                  }, 
                 )
               ]
             );

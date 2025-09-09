@@ -58,106 +58,106 @@ class _SortedPage2State extends State<SortedPage2> {
             ],
           ),
           body: Column(
-            children: [
-              StreakWidget(),
-              const SizedBox(height: 5),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: Row(
-                  children: _categories.map((cat) {
-                    final isSelected = cat == _selectedCategory;
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4),
-                      child: ChoiceChip(
-                        label: Text(cat),
-                        selected: isSelected,
-                        selectedColor: theme.colorScheme.secondaryContainer,
-                        onSelected: (_) {
-                          setState(() => _selectedCategory = cat);
-                        },
-                        backgroundColor: theme.chipTheme.backgroundColor,
-                        labelStyle: theme.chipTheme.labelStyle,
-                      ),
-                    );
-                  }).toList(),
-                ),
-              ),
-              const SizedBox(height: 10),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: entries.length,
-                  itemBuilder: (context, index) {
-                    final entry = entries[index];
-
-                    return Slidable(
-                      key: ValueKey(
-                        '${entry.title}_${entry.date.toIso8601String()}',
-                      ),
-                      //slidebalActions
-                      startActionPane: ActionPane(
-                        motion: const DrawerMotion(),
-                        children: [
-                          SlidableAction(
-                            onPressed: (_) {
-                              //EDIT: Navigate to addentrypage but pass entry for editing
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) =>
-                                      AddEntryPage(existingEntry: entry),
-                                ),
-                              );
-                            },
-                            backgroundColor: Colors.blue,
-                            foregroundColor: Colors.white,
-                            icon: Icons.edit,
-                            label: 'Edit',
-                          ),
-                        ],
-                      ),
-                      endActionPane: ActionPane(
-                        motion: const DrawerMotion(),
-                        dismissible: DismissiblePane(
-                          onDismissed: () {
-                            entryProvider.deleteEntry(index);
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Task deleted')),
-                            );
+              children: [
+                StreakWidget(),
+                const SizedBox(height: 5),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: Row(
+                    children: _categories.map((cat) {
+                      final isSelected = cat == _selectedCategory;
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        child: ChoiceChip(
+                          label: Text(cat),
+                          selected: isSelected,
+                          selectedColor: theme.colorScheme.secondaryContainer,
+                          onSelected: (_) {
+                            setState(() => _selectedCategory = cat);
                           },
+                          backgroundColor: theme.chipTheme.backgroundColor,
+                          labelStyle: theme.chipTheme.labelStyle,
                         ),
-                        children: [
-                          SlidableAction(
-                            onPressed: (_) {
-                              entryProvider.deleteEntry(
-                                index,
-                              ); // <-- pass index, not entry
+                      );
+                    }).toList(),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: entries.length,
+                    itemBuilder: (context, index) {
+                      final entry = entries[index];
+            
+                      return Slidable(
+                        key: ValueKey(
+                          '${entry.title}_${entry.date.toIso8601String()}',
+                        ),
+                        //slidebalActions
+                        startActionPane: ActionPane(
+                          motion: const DrawerMotion(),
+                          children: [
+                            SlidableAction(
+                              onPressed: (_) {
+                                //EDIT: Navigate to addentrypage but pass entry for editing
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) =>
+                                        AddEntryPage(existingEntry: entry),
+                                  ),
+                                );
+                              },
+                              backgroundColor: Colors.blue,
+                              foregroundColor: Colors.white,
+                              icon: Icons.edit,
+                              label: 'Edit',
+                            ),
+                          ],
+                        ),
+                        endActionPane: ActionPane(
+                          motion: const DrawerMotion(),
+                          dismissible: DismissiblePane(
+                            onDismissed: () {
+                              entryProvider.deleteEntry(index);
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(content: Text('Task deleted')),
                               );
                             },
-                            backgroundColor: Colors.red,
-                            foregroundColor: Colors.white,
-                            icon: Icons.delete,
-                            label: 'Delete',
                           ),
-                        ],
-                      ),
-                      child: ListTile(
-                        leading: entry.imagePath != null
-                            ? Image.file(File(entry.imagePath!))
-                            : const Icon(Icons.image_not_supported),
-                        title: Text(entry.title),
-                        subtitle: Text(
-                          "Priority: ${entry.priority}\n ${entry.category}\n ${entry.date.toLocal()}",
+                          children: [
+                            SlidableAction(
+                              onPressed: (_) {
+                                entryProvider.deleteEntry(
+                                  index,
+                                ); // <-- pass index, not entry
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('Task deleted')),
+                                );
+                              },
+                              backgroundColor: Colors.red,
+                              foregroundColor: Colors.white,
+                              icon: Icons.delete,
+                              label: 'Delete',
+                            ),
+                          ],
                         ),
-                      ),
-                    );
-                  },
+                        child: ListTile(
+                          leading: entry.imagePath != null
+                              ? Image.file(File(entry.imagePath!))
+                              : const Icon(Icons.image_not_supported),
+                          title: Text(entry.title),
+                          subtitle: Text(
+                            "Priority: ${entry.priority}\n ${entry.category}\n ${entry.date.toLocal()}",
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
         );
       },
     );

@@ -242,4 +242,10 @@ Future<void> updateEntry(Entry entry) async {
   await loadEntries();
   notifyListeners();
 }
+//clear all entries
+void clearAllEntries()async{
+  await _localBox.clear();//clears hive box
+  entries.clear();//clear local list
+  notifyListeners();
+}
 }
