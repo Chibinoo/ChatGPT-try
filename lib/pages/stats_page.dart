@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/data/entry_provider.dart';
 import 'package:flutter_application_1/pages/settings_page.dart';
+import 'package:flutter_application_1/widgets/streak_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../data/entry.dart';
@@ -10,38 +11,40 @@ class StatsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final entries=Provider.of<EntryProvider>(context).entries;
+    final entries = Provider.of<EntryProvider>(context).entries;
 
     //count priorities
-    Map<int,int> priorityCount={1:0, 2:0, 3:0, 4:0, 5:0};
-    for (Entry entry in entries){
-      priorityCount[entry.priority]=(priorityCount[entry.priority]??0)+1;
+    Map<int, int> priorityCount = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0};
+    for (Entry entry in entries) {
+      priorityCount[entry.priority] = (priorityCount[entry.priority] ?? 0) + 1;
     }
     //count categories
-    Map<String, int> categoryCounts={};
-    for(var e in entries){
-      categoryCounts[e.category]=(categoryCounts[e.category]??0)+1;
+    Map<String, int> categoryCounts = {};
+    for (var e in entries) {
+      categoryCounts[e.category] = (categoryCounts[e.category] ?? 0) + 1;
     }
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Statistics'),
         actions: [
-              IconButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => SettingsPage()),
-                  );
-                },
-                icon: const Icon(Icons.settings),
-              ),
-            ],
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SettingsPage()),
+              );
+            },
+            icon: const Icon(Icons.settings),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
+            StreakWidget(),
+            const SizedBox(height: 5),
             const Text(
               'Entries per priority',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -51,14 +54,14 @@ class StatsPage extends StatelessWidget {
               height: 200,
               child: BarChart(
                 BarChartData(
-                  barGroups: priorityCount.entries.map((entry){
-                    final priority=entry.key;
+                  barGroups: priorityCount.entries.map((entry) {
+                    final priority = entry.key;
                     return BarChartGroupData(
                       x: entry.key,
                       barRods: [
                         BarChartRodData(
                           toY: entry.value.toDouble(),
-                          color: _getPriorityColor(priority)
+                          color: _getPriorityColor(priority),
                         ),
                       ],
                     );
@@ -67,17 +70,19 @@ class StatsPage extends StatelessWidget {
                     bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
-                        getTitlesWidget: (value, _) => Text(value.toInt().toString()),
+                        getTitlesWidget: (value, _) =>
+                            Text(value.toInt().toString()),
                       ),
                     ),
                     leftTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        interval: 1
-                      ),
+                      sideTitles: SideTitles(showTitles: true, interval: 1),
                     ),
-                    rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                    topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    rightTitles: const AxisTitles(
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
+                    topTitles: const AxisTitles(
+                      sideTitles: SideTitles(showTitles: false),
+                    ),
                   ),
                 ),
               ),
@@ -91,16 +96,36 @@ class StatsPage extends StatelessWidget {
               height: 250,
               child: PieChart(
                 PieChartData(
-                  sections: categoryCounts.entries.map((entry){
-                    final percentage=(entry.value/entries.length)*100;
-                    return PieChartSectionData(
-                      value: entry.value.toDouble(),
-                      title: '${entry.key}\n${percentage.toStringAsFixed(1)}%',
-                      radius: 80,
-                      color: _getCategoryColor(entry.key),
-                      titleStyle: const TextStyle(fontSize: 14,fontWeight: FontWeight.bold, color: Colors.white),
-                    );
-                  }).toList(),
+                  sections: categoryCounts.isEmpty
+                      ? [
+                          PieChartSectionData(
+                            value: 1,
+                            title: 'No Data',
+                            radius: 80,
+                            color: Colors.grey[300]!,
+                            titleStyle: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black54,
+                            ),
+                          ),
+                        ]
+                      : categoryCounts.entries.map((entry) {
+                          final percentage =
+                              (entry.value / entries.length) * 100;
+                          return PieChartSectionData(
+                            value: entry.value.toDouble(),
+                            title:
+                                '${entry.key}\n${percentage.toStringAsFixed(1)}%',
+                            radius: 80,
+                            color: _getCategoryColor(entry.key),
+                            titleStyle: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          );
+                        }).toList(),
                   sectionsSpace: 2,
                   centerSpaceRadius: 30,
                 ),
@@ -111,24 +136,26 @@ class StatsPage extends StatelessWidget {
       ),
     );
   }
+
   //helper for priority colors
-  static Color _getPriorityColor(int priority){
-    switch(priority){
+  static Color _getPriorityColor(int priority) {
+    switch (priority) {
       case 1:
       case 2:
-      return Colors.green;
+        return Colors.green;
       case 3:
       case 4:
-      return Colors.orange;
+        return Colors.orange;
       case 5:
-      return Colors.red;
+        return Colors.red;
       default:
-      return Colors.grey;
+        return Colors.grey;
     }
   }
+
   //helper for category colors
-  Color _getCategoryColor(String category){
-    switch(category){
+  Color _getCategoryColor(String category) {
+    switch (category) {
       case 'Work':
         return Colors.blue;
       case 'Hobby':

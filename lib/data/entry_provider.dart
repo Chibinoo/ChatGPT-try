@@ -5,14 +5,24 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class EntryProvider with ChangeNotifier {
   bool useCloud=false;//toggel betwin local and cloud save
+
+  void setUseCloud(bool value){
+    useCloud=value;
+    notifyListeners();
+  }
+
   late Box<Entry>_localBox;
   final _firestore=FirebaseFirestore.instance.collection('entries');
 
   List<Entry> _entries = [];
   List<Entry> get entries => _entries;
 
-  Future<void> init()async{
-    _localBox=await Hive.openBox<Entry>('entries');
+  Future<void> init() async {
+    if (!Hive.isBoxOpen('entries')) {
+      _localBox = await Hive.openBox<Entry>('entries');
+    } else {
+      _localBox = Hive.box<Entry>('entries');
+    }
     await loadEntries();
   }
 //toggel storage and sync data
@@ -141,6 +151,16 @@ Future<void> mergeCloudToLocal(bool deleteCloud) async{
   await loadEntries();
   notifyListeners();
 }
+
+Future<List<Map>> getAllEntries() async {
+  if (useCloud) {
+    final snapshot = await FirebaseFirestore.instance.collection('entries').get();
+    return snapshot.docs.map((d) => d.data()).toList();
+  } else {
+    // Use the already opened _localBox
+    return _localBox.values.map((e) => (e as Entry).toMap()).toList();
+  }
+}
 ///Helper: check if entry exists(based on titel+date)
 bool _containsEntry(List<Entry> list, Entry entry){
   return list.any((e)=>
@@ -247,5 +267,19 @@ void clearAllEntries()async{
   await _localBox.clear();//clears hive box
   entries.clear();//clear local list
   notifyListeners();
+}
+//helper for streak tiles
+List<DateTime> get last7Days{
+  final now=DateTime.now();
+  return List.generate(7, (i){
+    final day=now.subtract(Duration(days: 6-i));
+    return DateTime(day.year, day.month, day.day);
+  });
+}
+bool hasEntryOn(DateTime day){
+  return entries.any((e){
+    final d=DateTime(e.date.year, e.date.month, e.date.day);
+    return d==day;
+  });
 }
 }

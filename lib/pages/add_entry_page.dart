@@ -96,12 +96,6 @@ class _AddEntryPageState extends State<AddEntryPage> {
       appBar: AppBar(
         title: 
         Text(widget.existingEntry==null?"Add Entry":"Edit Entry"),
-        actions: [
-          /*IconButton(
-            onPressed: _saveEntry, 
-            icon: const Icon(Icons.check)
-          ),*/
-        ],
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16),
