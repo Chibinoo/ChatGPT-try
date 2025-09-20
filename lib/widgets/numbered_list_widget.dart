@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/pages/edit_numbered_list_page.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_application_1/data/entry_provider.dart';
 
@@ -53,58 +54,51 @@ class _NumberedListWidgetState extends State<NumberedListWidget> {
         if (!provider.listEnabled) {
           return const SizedBox.shrink();
         }
-        _syncControllers(provider.numberedItems);
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Numbered List',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            Row(
+              children: [
+                const Text(
+                  'Numbered List',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.edit),
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => EditNumberedListPage(),
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
             const SizedBox(height: 8),
-            // ignore: sized_box_for_whitespace
-            ReorderableListView(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                onReorder: (oldIndex, newIndex) {
-                  provider.reorderItems(oldIndex, newIndex);
-                  setState(() {});
-                },
-                children: [
-                  for (int index = 0; index < provider.numberedItems.length; index++)
-                    ListTile(
-                      key: ValueKey('item_$index'),
-                      leading: Text('${index + 1}.'),
-                      title: TextField(
-                        controller: _controllers[index],
-                        focusNode: _focusNodes[index],
-                        onChanged: (value) {
-                          provider.updateItem(index, value);
-                        },
-                        decoration: const InputDecoration(
-                          border: UnderlineInputBorder(),
-                        ),
-                      ),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.delete, color: Colors.red),
-                        onPressed: () {
-                          provider.removeItem(index);
-                          setState(() {});
-                        },
+            ...provider.numberedItems.asMap().entries.map((entry) {
+              final index = entry.key;
+              final title = entry.value;
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 5), // Increase vertical space
+                child: Row(
+                  children: [
+                    Text(
+                      '${index + 1}.',
+                      style: const TextStyle(fontSize: 18), // Bigger number
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Text(
+                        title,
+                        style: const TextStyle(fontSize: 18), // Bigger text
                       ),
                     ),
-                ],
-              ),
-            const SizedBox(height: 10),
-            ElevatedButton.icon(
-              onPressed: () {
-                provider.addItem();
-                setState(() {});
-              },
-              icon: const Icon(Icons.add),
-              label: const Text('Add Item'),
-            ),
+                  ],
+                ),
+              );
+            }).toList(),
           ],
         );
       },

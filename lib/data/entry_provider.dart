@@ -337,4 +337,8 @@ void reorderItems(int oldIndex, int newIndex) {
   Hive.box('numberedList').put('items', numberedItems); // Persist changes
   notifyListeners();
 }
+void saveNumberedItems(){
+  Hive.box('numberedList').put('item', numberedItems);
+  notifyListeners();
+}
 }
