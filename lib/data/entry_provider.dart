@@ -3,8 +3,9 @@ import 'entry.dart';
 import 'package:hive/hive.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class EntryProvider with ChangeNotifier {
+class EntryProvider extends ChangeNotifier {
   bool useCloud=false;//toggel betwin local and cloud save
+  bool listEnabled=true;//toggels notfallplan on and off
 
   void setUseCloud(bool value){
     useCloud=value;
@@ -281,5 +282,52 @@ bool hasEntryOn(DateTime day){
     final d=DateTime(e.date.year, e.date.month, e.date.day);
     return d==day;
   });
+}
+
+//notfallplan
+List<String>numberedItems=[];
+
+EntryProvider(){
+  _loadNumberedList();
+}
+
+Future<void> _loadNumberedList()async{
+  final settingsBox=Hive.box('settings');
+  final listBox=Hive.box('numberedList');
+
+  listEnabled=settingsBox.get('listEnabeled', defaultValue: true);
+  numberedItems=(listBox.get('items',defaultValue: <String>[])as List).cast<String>();
+  notifyListeners();
+}
+void toggleListEnabel(bool value){
+  listEnabled=value;
+  Hive.box('settings').put('listEnabled', value);
+  notifyListeners();
+}
+void updateItem(int index, String value) {
+  if (index >= 0 && index < numberedItems.length) {
+    numberedItems[index] = value;
+    Hive.box('numberedList').put('items', numberedItems); // <-- Save after every change
+    notifyListeners();
+  }
+}
+void addItem(){
+  numberedItems.add('');
+  Hive.box('numberedList').put('items', numberedItems);
+  notifyListeners();
+}
+void removeItem(int index){
+  numberedItems.removeAt(index);
+  Hive.box('numberedList').put('items', numberedItems);
+  notifyListeners();
+}
+void reorderItems(int oldIndex, int newIndex) {
+  if (oldIndex < newIndex) {
+    newIndex -= 1;
+  }
+  final item = numberedItems.removeAt(oldIndex);
+  numberedItems.insert(newIndex, item);
+  Hive.box('numberedList').put('items', numberedItems); // Persist changes
+  notifyListeners();
 }
 }

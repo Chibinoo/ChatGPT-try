@@ -19,6 +19,7 @@ class SettingsPage extends StatelessWidget {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+
                 //Storage Mode
                 const Text(
                   'Storage Mode',
@@ -74,6 +75,7 @@ class SettingsPage extends StatelessWidget {
                     const Text('Cloud Storage'),
                   ],
                 ),
+
                 //Theme
                 const Text(
                   'Theme',
@@ -90,6 +92,7 @@ class SettingsPage extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 10),
+
                 //Clear Entries
                 const Text(
                   'Clear Entries',
@@ -129,6 +132,15 @@ class SettingsPage extends StatelessWidget {
                       );
                     }
                   }, 
+                ),
+
+                //toggel numbered List 
+                SwitchListTile(
+                  title: const Text('Enabel Numbered List'),
+                  value: context.watch<EntryProvider>().listEnabled, 
+                  onChanged: (val){
+                    context.read<EntryProvider>().toggleListEnabel(val);
+                  },
                 ),
               ]
             );

@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'data/entry_provider.dart';
 
 void main() async{
+
   WidgetsFlutterBinding.ensureInitialized();
   //init cloud save
   await Firebase.initializeApp();
@@ -15,6 +16,9 @@ void main() async{
   await Hive.initFlutter();
   Hive.registerAdapter(EntryAdapter());
   await Hive.openBox<Entry>('entries');
+
+  await Hive.openBox('settings');
+  await Hive.openBox('numberedList');
 
   final entryProvider=EntryProvider();
   await entryProvider.init();

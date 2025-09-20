@@ -3,6 +3,7 @@ import 'package:flutter_application_1/data/entry.dart';
 import 'package:flutter_application_1/pages/add_entry_page.dart';
 import 'package:flutter_application_1/pages/settings_page.dart';
 import 'package:flutter_application_1/themes/theme_provider.dart';
+import 'package:flutter_application_1/widgets/numbered_list_widget.dart';
 import 'package:flutter_application_1/widgets/streak_tiles_widget.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
@@ -25,40 +26,42 @@ class _SortedPage2State extends State<SortedPage2> {
     'Personal',
     'Other',
   ];
-  Map<DateTime, bool> entriesByDay={};
-  int streakCount=0;
-   @override
+  Map<DateTime, bool> entriesByDay = {};
+  int streakCount = 0;
+
+  @override
   void initState() {
     super.initState();
     _loadStreakData();
   }
-  Future<void>_loadStreakData() async{
-    final provider=Provider.of<EntryProvider>(context, listen: false);
-    final entries=await provider.getAllEntries();
-    final now=DateTime.now();
-    final today=DateTime(now.year, now.month, now.day);
-  
-  //group entries by date
-  Map<DateTime, bool>map={};
 
-  for (var entry in entries){
-    if(entry['date']!=null){
-      final date=DateTime.parse(entry['date']);
-      final day=DateTime(date.year, date.month, date.day);
-      map[day]=true;
+  Future<void> _loadStreakData() async {
+    final provider = Provider.of<EntryProvider>(context, listen: false);
+    final entries = await provider.getAllEntries();
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+
+    //group entries by date
+    Map<DateTime, bool> map = {};
+
+    for (var entry in entries) {
+      if (entry['date'] != null) {
+        final date = DateTime.parse(entry['date']);
+        final day = DateTime(date.year, date.month, date.day);
+        map[day] = true;
+      }
     }
-  }
-  //calculate current streak
-  int currentStreak=0;
-  DateTime cursor=today;
-  while(map[cursor]==true){
-    currentStreak++;
-    cursor=cursor.subtract(const Duration(days: 1));
-  }
-  setState(() {
-    entriesByDay=map;
-    streakCount=currentStreak;
-  });
+    //calculate current streak
+    int currentStreak = 0;
+    DateTime cursor = today;
+    while (map[cursor] == true) {
+      currentStreak++;
+      cursor = cursor.subtract(const Duration(days: 1));
+    }
+    setState(() {
+      entriesByDay = map;
+      streakCount = currentStreak;
+    });
   }
 
   @override
@@ -92,17 +95,18 @@ class _SortedPage2State extends State<SortedPage2> {
               ),
             ],
           ),
-          body: Column(
-            children: [
+          body: SingleChildScrollView(
+            child: Column(
+              children: [
                 StreakTilesWidget(
                   entriesByDay: entriesByDay,
                   streakCount: streakCount,
                 ),
-                const SizedBox(height: 10,),
+                const SizedBox(height: 10),
                 ElevatedButton(
-                      onPressed: _loadStreakData, 
-                      child: const Text('Reload Streak Widget')
-                      ),
+                  onPressed: _loadStreakData,
+                  child: const Text('Reload Streak Widget'),
+                ),
                 const SizedBox(height: 5),
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
@@ -127,80 +131,81 @@ class _SortedPage2State extends State<SortedPage2> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: entries.length,
-                    itemBuilder: (context, index) {
-                      final entry = entries[index];
-            
-                      return Slidable(
-                        key: ValueKey(
-                          '${entry.title}_${entry.date.toIso8601String()}',
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: entries.length,
+                  itemBuilder: (context, index) {
+                    final entry = entries[index];
+                    return Slidable(
+                      key: ValueKey(
+                        '${entry.title}_${entry.date.toIso8601String()}',
+                      ),
+                      //slidebalActions
+                      startActionPane: ActionPane(
+                        motion: const DrawerMotion(),
+                        children: [
+                          SlidableAction(
+                            onPressed: (_) {
+                              //EDIT: Navigate to addentrypage but pass entry for editing
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) =>
+                                      AddEntryPage(existingEntry: entry),
+                                ),
+                              );
+                            },
+                            backgroundColor: Colors.blue,
+                            foregroundColor: Colors.white,
+                            icon: Icons.edit,
+                            label: 'Edit',
+                          ),
+                        ],
+                      ),
+                      endActionPane: ActionPane(
+                        motion: const DrawerMotion(),
+                        dismissible: DismissiblePane(
+                          onDismissed: () {
+                            entryProvider.deleteEntry(index);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Task deleted')),
+                            );
+                          },
                         ),
-                        //slidebalActions
-                        startActionPane: ActionPane(
-                          motion: const DrawerMotion(),
-                          children: [
-                            SlidableAction(
-                              onPressed: (_) {
-                                //EDIT: Navigate to addentrypage but pass entry for editing
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) =>
-                                        AddEntryPage(existingEntry: entry),
-                                  ),
-                                );
-                              },
-                              backgroundColor: Colors.blue,
-                              foregroundColor: Colors.white,
-                              icon: Icons.edit,
-                              label: 'Edit',
-                            ),
-                          ],
-                        ),
-                        endActionPane: ActionPane(
-                          motion: const DrawerMotion(),
-                          dismissible: DismissiblePane(
-                            onDismissed: () {
-                              entryProvider.deleteEntry(index);
+                        children: [
+                          SlidableAction(
+                            onPressed: (_) {
+                              entryProvider.deleteEntry(
+                                index,
+                              ); // <-- pass index, not entry
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(content: Text('Task deleted')),
                               );
                             },
+                            backgroundColor: Colors.red,
+                            foregroundColor: Colors.white,
+                            icon: Icons.delete,
+                            label: 'Delete',
                           ),
-                          children: [
-                            SlidableAction(
-                              onPressed: (_) {
-                                entryProvider.deleteEntry(
-                                  index,
-                                ); // <-- pass index, not entry
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('Task deleted')),
-                                );
-                              },
-                              backgroundColor: Colors.red,
-                              foregroundColor: Colors.white,
-                              icon: Icons.delete,
-                              label: 'Delete',
-                            ),
-                          ],
+                        ],
+                      ),
+                      child: ListTile(
+                        leading: entry.imagePath != null
+                            ? Image.file(File(entry.imagePath!))
+                            : const Icon(Icons.image_not_supported),
+                        title: Text(entry.title),
+                        subtitle: Text(
+                          "Priority: ${entry.priority}\n ${entry.category}\n ${entry.date.toLocal()}",
                         ),
-                        child: ListTile(
-                          leading: entry.imagePath != null
-                              ? Image.file(File(entry.imagePath!))
-                              : const Icon(Icons.image_not_supported),
-                          title: Text(entry.title),
-                          subtitle: Text(
-                            "Priority: ${entry.priority}\n ${entry.category}\n ${entry.date.toLocal()}",
-                          ),
-                        ),
-                      );
-                    },
-                  ),
+                      ),
+                    );
+                  },
                 ),
-            ]
-              )
+                NumberedListWidget(), // <-- Now always visible under the entry list
+              ],
+            ),
+          ),
         );
       },
     );
