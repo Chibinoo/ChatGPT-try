@@ -177,27 +177,32 @@ void switchMode(bool cloud){
 }
 
 //steak system
-int get streakCount{
-  if(entries.isEmpty) return 0;
-  //get unique dates
-  final uniqueDates=entries.map((e)=>DateTime(e.date.year, e.date.month, e.date.day)).toSet().toList()
-  ..sort((a,b)=>b.compareTo(a));//newest first
-  int streak=1;
-  DateTime currentDay=uniqueDates.first;
+int get streakCount {
+  if (entries.isEmpty) return 0;
+  final today = DateTime.now();
+  final todayDate = DateTime(today.year, today.month, today.day);
 
-  for(int i=1;i<uniqueDates.length;i++){
-    final difference=currentDay.difference(uniqueDates[i]).inDays;
-    if(difference==1){
+  final uniqueDates = entries
+      .map((e) => DateTime(e.date.year, e.date.month, e.date.day))
+      .toSet()
+      .toList()
+    ..sort((a, b) => b.compareTo(a)); // newest first
+
+  int streak = 1;
+  DateTime currentDay = uniqueDates.first;
+
+  for (int i = 1; i < uniqueDates.length; i++) {
+    final difference = currentDay.difference(uniqueDates[i]).inDays;
+    if (difference == 1) {
       streak++;
-      currentDay=uniqueDates[i];
-    }else{
-      break;//streak broken
+      currentDay = uniqueDates[i];
+    } else {
+      break; // streak broken
     }
   }
-  //if no entry today, streak is 0
-  if(uniqueDates.first!=DateTime.now().toLocal().subtract(const Duration(days: 0))&&
-  uniqueDates.first!=DateTime.now()){
-    streak=0;
+  // if no entry today, streak is 0
+  if (uniqueDates.first != todayDate) {
+    streak = 0;
   }
   return streak;
 }
@@ -263,12 +268,14 @@ Future<void> updateEntry(Entry entry) async {
   await loadEntries();
   notifyListeners();
 }
+
 //clear all entries
 void clearAllEntries()async{
   await _localBox.clear();//clears hive box
   entries.clear();//clear local list
   notifyListeners();
 }
+
 //helper for streak tiles
 List<DateTime> get last7Days{
   final now=DateTime.now();

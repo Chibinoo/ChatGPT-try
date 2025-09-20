@@ -3,7 +3,8 @@ import 'package:flutter_application_1/data/entry_provider.dart';
 import 'package:provider/provider.dart';
 
 class StreakWidget extends StatelessWidget {
-  const StreakWidget({super.key});
+
+  const StreakWidget({super.key,});
 
   @override
   Widget build(BuildContext context) {
