@@ -55,51 +55,54 @@ class _NumberedListWidgetState extends State<NumberedListWidget> {
           return const SizedBox.shrink();
         }
 
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                const Text(
-                  'Numbered List',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.edit),
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => EditNumberedListPage(),
+        return Padding(
+          padding: const EdgeInsets.all(16.0), // <-- Add padding here
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Text(
+                    'Numbered List',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.edit),
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => EditNumberedListPage(),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              ...provider.numberedItems.asMap().entries.map((entry) {
+                final index = entry.key;
+                final title = entry.value;
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 5),
+                  child: Row(
+                    children: [
+                      Text(
+                        '${index + 1}.',
+                        style: const TextStyle(fontSize: 18),
                       ),
-                    );
-                  },
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            ...provider.numberedItems.asMap().entries.map((entry) {
-              final index = entry.key;
-              final title = entry.value;
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 5), // Increase vertical space
-                child: Row(
-                  children: [
-                    Text(
-                      '${index + 1}.',
-                      style: const TextStyle(fontSize: 18), // Bigger number
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Text(
-                        title,
-                        style: const TextStyle(fontSize: 18), // Bigger text
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Text(
+                          title,
+                          style: const TextStyle(fontSize: 18),
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              );
-            }),
-          ],
+                    ],
+                  ),
+                );
+              }),
+            ],
+          ),
         );
       },
     );
