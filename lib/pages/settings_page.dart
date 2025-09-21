@@ -104,7 +104,8 @@ class SettingsPage extends StatelessWidget {
                   icon: const Icon(Icons.delete_forever),
                   label: const Text('Delete All Entries'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
+                    backgroundColor: Colors.grey.shade200,
+                    foregroundColor: Colors.red
                   ),
                   onPressed: ()async{
                     final confirm=await showDialog<bool>(

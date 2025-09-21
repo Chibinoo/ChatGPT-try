@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/data/entry.dart';
+import 'package:flutter_application_1/pages/add_entry_page.dart';
 import 'package:flutter_application_1/pages/settings_page.dart';
 import 'package:flutter_application_1/themes/theme_provider.dart';
 import 'package:flutter_application_1/widgets/entry_list_widget.dart';
@@ -128,6 +129,16 @@ class _SortedPage2State extends State<SortedPage2> {
                   children: [
                     Padding(padding: EdgeInsetsGeometry.symmetric(horizontal: 10)),
                     Text('Entries', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),),
+                    IconButton(
+                    icon: const Icon(Icons.edit),
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => AddEntryPage(),
+                        ),
+                      );
+                    },
+                  ),
                   ],
                 ),
                 EntryListWidget(entries: entries),

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/pages/sorted_page2.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
@@ -72,6 +73,11 @@ class _AddEntryPageState extends State<AddEntryPage> {
       );
       await provider.addEntry(newEntry);
     }
+    Navigator.of(context).pop(
+                        MaterialPageRoute(
+                          builder: (_) => SortedPage2(),
+                        ),
+                      );
   }
 
   Widget _buildCategorySelector(){
@@ -96,6 +102,7 @@ class _AddEntryPageState extends State<AddEntryPage> {
       appBar: AppBar(
         title: 
         Text(widget.existingEntry==null?"Add Entry":"Edit Entry"),
+        automaticallyImplyLeading: false,
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16),
