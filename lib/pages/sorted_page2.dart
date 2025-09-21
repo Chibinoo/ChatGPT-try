@@ -126,6 +126,12 @@ class _SortedPage2State extends State<SortedPage2> {
                   ),
                 ),
                 const SizedBox(height: 10),
+                Row(
+                  children: [
+                    Padding(padding: EdgeInsetsGeometry.symmetric(horizontal: 10)),
+                    Text('Entries', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),),
+                  ],
+                ),
                 ListView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),

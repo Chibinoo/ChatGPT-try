@@ -14,27 +14,6 @@ class _NumberedListWidgetState extends State<NumberedListWidget> {
   final List<TextEditingController> _controllers = [];
   final List<FocusNode> _focusNodes = [];
 
-  void _syncControllers(List<String> items) {
-    // Add controllers and focus nodes if needed
-    while (_controllers.length < items.length) {
-      _controllers.add(TextEditingController(text: items[_controllers.length]));
-      _focusNodes.add(FocusNode());
-    }
-    // Remove controllers and focus nodes if needed
-    while (_controllers.length > items.length) {
-      _controllers.removeLast().dispose();
-      _focusNodes.removeLast().dispose();
-    }
-    // Only update controller text if its own node is not focused
-    for (int i = 0; i < items.length; i++) {
-      final controller = _controllers[i];
-      final focusNode = _focusNodes[i];
-      // Only update if not focused and text is different
-      if (!focusNode.hasFocus && controller.text != items[i]) {
-        controller.text = items[i];
-      }
-    }
-  }
 
   @override
   void dispose() {
