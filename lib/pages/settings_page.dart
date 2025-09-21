@@ -9,6 +9,7 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final entryProvider = Provider.of<EntryProvider>(context, listen: false);
     
     return Scaffold(
       appBar: AppBar(title: Text('Settings')),
@@ -142,6 +143,18 @@ class SettingsPage extends StatelessWidget {
                     context.read<EntryProvider>().toggleListEnabel(val);
                   },
                 ),
+              //relode streak widget
+              ElevatedButton(
+            onPressed: () async {
+              // If you want to reload streak data, call your provider's method here
+              await entryProvider.loadEntries(); // Or your streak reload logic
+              // ignore: use_build_context_synchronously
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Streak reloaded!')),
+              );
+            },
+            child: const Text('Reload Streak Widget'),
+          ),
               ]
             );
           }

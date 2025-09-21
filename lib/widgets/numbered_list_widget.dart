@@ -98,7 +98,7 @@ class _NumberedListWidgetState extends State<NumberedListWidget> {
                   ],
                 ),
               );
-            }).toList(),
+            }),
           ],
         );
       },

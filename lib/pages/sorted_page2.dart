@@ -102,11 +102,6 @@ class _SortedPage2State extends State<SortedPage2> {
                   entriesByDay: entriesByDay,
                   streakCount: streakCount,
                 ),
-                const SizedBox(height: 10),
-                ElevatedButton(
-                  onPressed: _loadStreakData,
-                  child: const Text('Reload Streak Widget'),
-                ),
                 const SizedBox(height: 5),
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
