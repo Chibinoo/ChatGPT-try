@@ -73,11 +73,7 @@ class _AddEntryPageState extends State<AddEntryPage> {
       );
       await provider.addEntry(newEntry);
     }
-    Navigator.of(context).pop(
-                        MaterialPageRoute(
-                          builder: (_) => SortedPage2(),
-                        ),
-                      );
+    Navigator.pushReplacementNamed(context, '/main');
   }
 
   Widget _buildCategorySelector(){
@@ -181,7 +177,7 @@ class _AddEntryPageState extends State<AddEntryPage> {
                       : Colors.black,     // or any color for light mode
                 ),
                 onPressed: (){
-                  Navigator.pop(context);
+                  Navigator.pushReplacementNamed(context, '/main');
                 },
                 child: const Text('Cancel'),
               )

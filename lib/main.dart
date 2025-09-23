@@ -1,6 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/data/entry.dart';
+import 'package:flutter_application_1/pages/add_entry_page.dart';
+import 'package:flutter_application_1/pages/sorted_page2.dart';
 import 'package:flutter_application_1/themes/theme_provider.dart';
 import 'package:flutter_application_1/widgets/widget_tree.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -47,7 +49,11 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Entries App',
       theme: themeProvider.themeData, // <-- use your provider's theme
-      home: const WidgetTree(),
+      initialRoute: '/add',
+      routes: {
+        '/add':(context)=>const AddEntryPage(),
+        '/main':(context)=>const WidgetTree(),
+      },
     );
   },
     );
