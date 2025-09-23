@@ -171,6 +171,21 @@ class _AddEntryPageState extends State<AddEntryPage> {
                 child: const Text('Save'),
               ),
             ),
+            const SizedBox(height: 10),
+            Center(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.colorScheme.secondaryContainer,
+                  foregroundColor: Provider.of<ThemeProvider>(context).isDarkMode
+                      ? Colors.white // or any color for dark mode
+                      : Colors.black,     // or any color for light mode
+                ),
+                onPressed: (){
+                  Navigator.pop(context);
+                },
+                child: const Text('Cancel'),
+              )
+            )
           ],
         ),
       ),
