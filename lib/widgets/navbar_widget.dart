@@ -25,6 +25,7 @@ class _NavbarWidgetState extends State<NavbarWidget> {
               backgroundColor: theme.bottomNavigationBarTheme.backgroundColor, // <-- use this
               destinations: const [
                 NavigationDestination(icon: Icon(Icons.edit_note_sharp), label: 'Entries'),
+                NavigationDestination(icon: Icon(Icons.edit_note_sharp), label: 'Entries2'),
                 NavigationDestination(icon: Icon(Icons.list), label: 'Stats'),
                 NavigationDestination(icon: Icon(Icons.settings), label: 'Settings')
               ],

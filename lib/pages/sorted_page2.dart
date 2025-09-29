@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/data/entry.dart';
 import 'package:flutter_application_1/pages/add_entry_page.dart';
-import 'package:flutter_application_1/pages/settings_page.dart';
 import 'package:flutter_application_1/themes/theme_provider.dart';
 import 'package:flutter_application_1/widgets/entry_list_widget.dart';
 import 'package:flutter_application_1/widgets/numbered_list_widget.dart';
@@ -37,30 +36,15 @@ class _SortedPage2State extends State<SortedPage2> {
   Future<void> _loadStreakData() async {
     final provider = Provider.of<EntryProvider>(context, listen: false);
     final entries = await provider.getAllEntries();
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
 
     //group entries by date
-    Map<DateTime, bool> map = {};
-
-    for (var entry in entries) {
-      if (entry['date'] != null) {
-        final date = DateTime.parse(entry['date']);
-        final day = DateTime(date.year, date.month, date.day);
-        map[day] = true;
-      }
+    Map<String, List<Entry>>groupedEntries={};
+    for(var entry in entries){
+      final date=entry.date;
+      final dateKey='${date.year}-${date.month.toString().padLeft(2,'0')}-${date.day.toString().padLeft(2,'0')}';
+      groupedEntries.putIfAbsent(dateKey, ()=>[]);
+      groupedEntries[dateKey]!.add(entry);
     }
-    //calculate current streak
-    int currentStreak = 0;
-    DateTime cursor = today;
-    while (map[cursor] == true) {
-      currentStreak++;
-      cursor = cursor.subtract(const Duration(days: 1));
-    }
-    setState(() {
-      entriesByDay = map;
-      streakCount = currentStreak;
-    });
   }
 
   @override
@@ -82,24 +66,12 @@ class _SortedPage2State extends State<SortedPage2> {
             title: const Text('Sorted Entries'),
             backgroundColor: theme.appBarTheme.backgroundColor,
             foregroundColor: theme.appBarTheme.foregroundColor,
-            actions: [
-              IconButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => SettingsPage()),
-                  );
-                },
-                icon: const Icon(Icons.settings),
-              ),
-            ],
           ),
           body: SingleChildScrollView(
             child: Column(
               children: [
                 StreakTilesWidget(
                   entriesByDay: entriesByDay,
-                  streakCount: streakCount,
                 ),
                 const SizedBox(height: 5),
                 SingleChildScrollView(

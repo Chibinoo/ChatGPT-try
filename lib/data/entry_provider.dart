@@ -19,11 +19,7 @@ class EntryProvider extends ChangeNotifier {
   List<Entry> get entries => _entries;
 
   Future<void> init() async {
-    if (!Hive.isBoxOpen('entries')) {
-      _localBox = await Hive.openBox<Entry>('entries');
-    } else {
-      _localBox = Hive.box<Entry>('entries');
-    }
+    _localBox=Hive.box<Entry>('entries');
     await loadEntries();
   }
 //toggel storage and sync data
@@ -153,15 +149,49 @@ Future<void> mergeCloudToLocal(bool deleteCloud) async{
   notifyListeners();
 }
 
-Future<List<Map>> getAllEntries() async {
+Future<List<Entry>> getAllEntries() async {
+  List<Entry> entriesList=[];
   if (useCloud) {
     final snapshot = await FirebaseFirestore.instance.collection('entries').get();
-    return snapshot.docs.map((d) => d.data()).toList();
-  } else {
-    // Use the already opened _localBox
-    return _localBox.values.map((e) => (e as Entry).toMap()).toList();
+    for(var doc in snapshot.docs){
+      final data=doc.data();
+      final date=parseDate(data['data']);
+
+      entriesList.add(Entry(
+        title: data['titel']??'', 
+        priority: data['priority']??1,
+        date: date, 
+        category: data['category']??'Other',
+        imagePath: data['imagePath'],
+        ));
+    }
+  }else{
+    final box=Hive.box<Entry>('entries');
+    for(var entry in box.values){
+      entriesList.add(Entry(
+        title: entry.title,
+        priority: entry.priority, 
+        date: entry.date, 
+        category:entry.category,
+        imagePath:entry.imagePath,
+        ));
+    }
+  }
+  return entriesList;
+}
+//helper for date 
+DateTime parseDate(dynamic value){
+  if(value is String){
+    return DateTime.parse(value);
+  }else if(value is Timestamp){
+    return value.toDate();
+  }else if(value is DateTime){
+    return value;
+  }else{
+    throw Exception('Unsupported date type:${value.runtimeType}');
   }
 }
+
 ///Helper: check if entry exists(based on titel+date)
 bool _containsEntry(List<Entry> list, Entry entry){
   return list.any((e)=>

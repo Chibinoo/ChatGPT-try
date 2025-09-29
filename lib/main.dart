@@ -2,7 +2,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/data/entry.dart';
 import 'package:flutter_application_1/pages/add_entry_page.dart';
-import 'package:flutter_application_1/pages/sorted_page2.dart';
 import 'package:flutter_application_1/themes/theme_provider.dart';
 import 'package:flutter_application_1/widgets/widget_tree.dart';
 import 'package:hive_flutter/hive_flutter.dart';

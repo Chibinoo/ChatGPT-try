@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_application_1/data/entry_provider.dart';
+import 'package:provider/provider.dart';
 
 class StreakTilesWidget extends StatelessWidget {
   final Map<DateTime, bool> entriesByDay;//date->has entry
-  final int streakCount;
 
   const StreakTilesWidget({
     super.key,
     required this.entriesByDay,
-    required this.streakCount
     });
 
   @override
   Widget build(BuildContext context) {
     final now=DateTime.now();
-    final today= DateTime(now.year, now.month, now.day);
-
+    final today= DateTime(now.year, now.month, now.day);  
     //show last 7 days+ today
     final days=List.generate(7, (i)=>today.subtract(Duration(days: 6-i)));
+    final streakCount=Provider.of<EntryProvider>(context).streakCount;
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,

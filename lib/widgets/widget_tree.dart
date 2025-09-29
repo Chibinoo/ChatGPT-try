@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/data/notifiers.dart';
 import 'package:flutter_application_1/pages/settings_page.dart';
+import 'package:flutter_application_1/pages/sorted_page.dart';
 import 'package:flutter_application_1/pages/sorted_page2.dart';
 import 'package:flutter_application_1/pages/stats_page.dart';
 import 'package:flutter_application_1/widgets/navbar_widget.dart';
 
 List<Widget> pages=[
+  SortedPage(),
   SortedPage2(),
   StatsPage(),
   SettingsPage()
