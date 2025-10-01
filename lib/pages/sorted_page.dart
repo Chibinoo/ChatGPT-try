@@ -74,32 +74,7 @@ class _SortedPageState extends State<SortedPage> {
 
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Sorted Entries'),
-            actions: [
-              PopupMenuButton<String>(
-                initialValue: _sortOption,
-                onSelected: (value) {
-                  setState(() {
-                    _sortOption = value;
-                  });
-                },
-                itemBuilder: (context) => const [
-                  PopupMenuItem(
-                    value: 'date_desc',
-                    child: Text('Newest First'),
-                  ),
-                  PopupMenuItem(value: 'date_asc', child: Text('Oldest First')),
-                  PopupMenuItem(
-                    value: 'priority_desc',
-                    child: Text('Highest priority'),
-                  ),
-                  PopupMenuItem(
-                    value: 'priority_asc',
-                    child: Text('Lowest priority'),
-                  ),
-                ],
-              ),
-            ],
+            title: const Text('Sorted Entries', style: TextStyle(fontSize: 25)),
           ),
           body: SingleChildScrollView(
             child: Column(
@@ -149,14 +124,41 @@ class _SortedPageState extends State<SortedPage> {
                         );
                       },
                     ),
+                    const Spacer(),
+                    PopupMenuButton<String>(
+                      initialValue: _sortOption,
+                      onSelected: (value) {
+                        setState(() {
+                          _sortOption = value;
+                        });
+                      },
+                      itemBuilder: (context) => const [
+                        PopupMenuItem(
+                          value: 'date_desc',
+                          child: Text('Newest First'),
+                        ),
+                        PopupMenuItem(
+                          value: 'date_asc',
+                          child: Text('Oldest First'),
+                        ),
+                        PopupMenuItem(
+                          value: 'priority_desc',
+                          child: Text('Highest priority'),
+                        ),
+                        PopupMenuItem(
+                          value: 'priority_asc',
+                          child: Text('Lowest priority'),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
                 Container(
                   child: entries.isEmpty
                       ? const Center(child: Text('No Entries yet'))
                       : ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
                           itemCount: entries.length,
                           itemBuilder: (context, index) {
                             final entry = entries[index];

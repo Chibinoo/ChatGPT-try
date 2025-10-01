@@ -12,7 +12,7 @@ class SettingsPage extends StatelessWidget {
     final entryProvider = Provider.of<EntryProvider>(context, listen: false);
     
     return Scaffold(
-      appBar: AppBar(title: Text('Settings')),
+      appBar: AppBar(title: Text('Settings',style: TextStyle(fontSize: 25))),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Consumer<EntryProvider>(

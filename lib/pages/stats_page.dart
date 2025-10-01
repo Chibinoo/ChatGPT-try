@@ -25,7 +25,7 @@ class StatsPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Statistics'),
+        title: const Text('Statistics',style: TextStyle(fontSize: 25)),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
