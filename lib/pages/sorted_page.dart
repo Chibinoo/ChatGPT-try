@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/pages/add_entry_page.dart';
+import 'package:flutter_application_1/widgets/entry_list_widget.dart';
 import 'package:flutter_application_1/widgets/streak_tiles_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -116,14 +117,14 @@ class _SortedPageState extends State<SortedPage> {
                         fontSize: 18,
                       ),
                     ),
-                    IconButton(
+                    /*IconButton(
                       icon: const Icon(Icons.edit),
                       onPressed: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(builder: (_) => AddEntryPage()),
                         );
                       },
-                    ),
+                    ),*/
                     const Spacer(),
                     PopupMenuButton<String>(
                       initialValue: _sortOption,
@@ -153,7 +154,7 @@ class _SortedPageState extends State<SortedPage> {
                     ),
                   ],
                 ),
-                Container(
+                /*Container(
                   child: entries.isEmpty
                       ? const Center(child: Text('No Entries yet'))
                       : ListView.builder(
@@ -210,7 +211,8 @@ class _SortedPageState extends State<SortedPage> {
                             );
                           },
                         ),
-                ),
+                ),*/
+                EntryListWidget(entries: entries),
                 NumberedListWidget(),
               ],
             ),

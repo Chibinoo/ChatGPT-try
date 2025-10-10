@@ -45,6 +45,7 @@ class _NumberedListWidgetState extends State<NumberedListWidget> {
                     'Numbered List',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
+                  const Spacer(),
                   IconButton(
                     icon: const Icon(Icons.edit),
                     onPressed: () {
