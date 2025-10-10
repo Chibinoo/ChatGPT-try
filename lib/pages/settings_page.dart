@@ -21,6 +21,42 @@ class SettingsPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
 
+                const Text('Account', style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color: Colors.orange)),
+
+                //todo:add account settings
+                //account settings
+                const SizedBox(height: 10),
+
+                const Text('Look', style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color: Colors.orange)),
+
+                //Theme
+                const Text(
+                  'Theme',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    CupertinoSwitch(
+                      value: Provider.of<ThemeProvider>(context).isDarkMode, 
+                      onChanged: (value)=>Provider.of<ThemeProvider>(context, listen: false).toggelTheme(),
+                    )
+                  ],
+                ),
+                const SizedBox(height: 10),
+
+                //toggel numbered List 
+                SwitchListTile(
+                  title: const Text('Enabel Numbered List'),
+                  value: context.watch<EntryProvider>().listEnabled, 
+                  onChanged: (val){
+                    context.read<EntryProvider>().toggleListEnabel(val);
+                  },
+                ),
+
+                const Text('Privace', style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color: Colors.orange)),
+
                 //Storage Mode
                 const Text(
                   'Storage Mode',
@@ -76,24 +112,9 @@ class SettingsPage extends StatelessWidget {
                     const Text('Cloud Storage'),
                   ],
                 ),
-
-                //Theme
-                const Text(
-                  'Theme',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    CupertinoSwitch(
-                      value: Provider.of<ThemeProvider>(context).isDarkMode, 
-                      onChanged: (value)=>Provider.of<ThemeProvider>(context, listen: false).toggelTheme(),
-                    )
-                  ],
-                ),
-                const SizedBox(height: 10),
-
+                
+                const Text('Debuging', style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color: Colors.orange)),
+                
                 //Clear Entries
                 const Text(
                   'Clear Entries',
@@ -136,16 +157,14 @@ class SettingsPage extends StatelessWidget {
                   }, 
                 ),
 
-                //toggel numbered List 
-                SwitchListTile(
-                  title: const Text('Enabel Numbered List'),
-                  value: context.watch<EntryProvider>().listEnabled, 
-                  onChanged: (val){
-                    context.read<EntryProvider>().toggleListEnabel(val);
-                  },
-                ),
+                
+
               //relode streak widget
               ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.grey.shade200,
+                    foregroundColor: Colors.red,
+                ),
             onPressed: () async {
               // If you want to reload streak data, call your provider's method here
               await entryProvider.loadEntries(); // Or your streak reload logic
@@ -153,6 +172,7 @@ class SettingsPage extends StatelessWidget {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Streak reloaded!')),
               );
+              
             },
             child: const Text('Reload Streak Widget'),
           ),

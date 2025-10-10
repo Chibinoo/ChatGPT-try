@@ -72,6 +72,7 @@ class _AddEntryPageState extends State<AddEntryPage> {
       );
       await provider.addEntry(newEntry);
     }
+    // ignore: use_build_context_synchronously
     Navigator.pushReplacementNamed(context, '/main');
   }
 
@@ -176,7 +177,7 @@ class _AddEntryPageState extends State<AddEntryPage> {
                       : Colors.black,     // or any color for light mode
                 ),
                 onPressed: (){
-                  Navigator.pushReplacementNamed(context, '/main');
+                   Navigator.pushReplacementNamed(context, '/main');
                 },
                 child: const Text('Cancel'),
               )

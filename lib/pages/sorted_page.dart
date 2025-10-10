@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/pages/add_entry_page.dart';
 import 'package:flutter_application_1/widgets/entry_list_widget.dart';
 import 'package:flutter_application_1/widgets/streak_tiles_widget.dart';
 import 'package:provider/provider.dart';
@@ -117,14 +116,6 @@ class _SortedPageState extends State<SortedPage> {
                         fontSize: 18,
                       ),
                     ),
-                    /*IconButton(
-                      icon: const Icon(Icons.edit),
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => AddEntryPage()),
-                        );
-                      },
-                    ),*/
                     const Spacer(),
                     PopupMenuButton<String>(
                       initialValue: _sortOption,
@@ -154,64 +145,6 @@ class _SortedPageState extends State<SortedPage> {
                     ),
                   ],
                 ),
-                /*Container(
-                  child: entries.isEmpty
-                      ? const Center(child: Text('No Entries yet'))
-                      : ListView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: entries.length,
-                          itemBuilder: (context, index) {
-                            final entry = entries[index];
-                            final date = parseDate(entry.date);
-
-                            return Dismissible(
-                              key: ValueKey(
-                                entry.title + date.toIso8601String(),
-                              ),
-                              background: Container(
-                                color: Colors.red,
-                                alignment: Alignment.centerLeft,
-                                padding: const EdgeInsets.only(left: 20),
-                                child: const Icon(
-                                  Icons.delete,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              secondaryBackground: Container(
-                                color: Colors.red,
-                                alignment: Alignment.centerRight,
-                                padding: const EdgeInsets.only(right: 20),
-                                child: const Icon(
-                                  Icons.delete,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              onDismissed: (direction) {
-                                entryProvider.deleteEntry(index);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text("Deleted''${entry.title}"),
-                                  ),
-                                );
-                              },
-                              child: ListTile(
-                                title: Text(entry.title),
-                                subtitle: Text(
-                                  "Date: ${date.toLocal().toString().split(' ')[0]}\n"
-                                  "Category: ${entry.category}",
-                                ),
-                                trailing: Text(
-                                  "Priority: ${entry.priority}",
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                ),*/
                 EntryListWidget(entries: entries),
                 NumberedListWidget(),
               ],
