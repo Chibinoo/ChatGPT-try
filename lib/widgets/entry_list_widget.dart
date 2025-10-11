@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/data/entry.dart';
-import 'package:flutter_application_1/pages/add_entry_page.dart';
 import 'package:flutter_application_1/data/entry_provider.dart';
+import 'package:flutter_application_1/pages/edit_entry_page.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'dart:io';
 import 'package:provider/provider.dart';
@@ -30,7 +30,7 @@ class EntryListWidget extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => AddEntryPage(existingEntry: entry),
+                      builder: (_) => EditEntryPage(existingEntry: entry),
                     ),
                   );
                 },
