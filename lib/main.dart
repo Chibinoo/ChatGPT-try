@@ -11,17 +11,28 @@ import 'data/entry_provider.dart';
 void main() async{
 
   WidgetsFlutterBinding.ensureInitialized();
-  //init cloud save
+  
+  // Initialize Firebase (for cloud mode)
   await Firebase.initializeApp();
-//init local save
-  await Hive.initFlutter();
-  Hive.registerAdapter(EntryAdapter());
-  await Hive.openBox<Entry>('entries');
 
+  // ⚙️ Run migration ONCE
+  //await migrateTitelToTitle();
+
+  // Initialize Hive (for local mode)
+  await Hive.initFlutter();
+
+  // ✅ Automatically register the adapter if not already registered
+  if (!Hive.isAdapterRegistered(0)) {
+    Hive.registerAdapter(EntryAdapter());
+  }
+
+  // Open boxes
+  await Hive.openBox<Entry>('entries');
   await Hive.openBox('settings');
   await Hive.openBox('numberedList');
 
-  final entryProvider=EntryProvider();
+  // Initialize provider
+  final entryProvider = EntryProvider();
   await entryProvider.init();
 
   runApp(

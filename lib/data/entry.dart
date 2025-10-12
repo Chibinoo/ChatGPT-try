@@ -12,7 +12,7 @@ class Entry {
 
   @HiveField(2)
   late int priority;
-  
+
   @HiveField(3)
   late String category;
 
@@ -20,32 +20,37 @@ class Entry {
   String? imagePath;
 
   Entry({
-    required this.title, 
-    required this.date, 
+    required this.title,
+    required this.date,
     required this.priority,
-    this.category='Other',
-    this.imagePath
+    this.category = 'Other',
+    this.imagePath,
   });
 
-  //Convert for firestore
-  Map<String, dynamic>toMap(){
-    return{
-      'titel':title,
-      'priority':priority,
-      'date':date.toIso8601String(),
-      'category':category,
-      'imagePath':imagePath
+  /// ✅ Convert to Firestore-safe map
+  Map<String, dynamic> toMap() {
+    return {
+      'title': title, // ✅ fixed key
+      'priority': priority,
+      'date': date.toIso8601String(),
+      'category': category,
+      'image': imagePath, // ✅ match provider field name
     };
   }
-  factory Entry.fromMap(Map<String, dynamic>map){
-    return Entry(
-      title: map['titel'], 
-      date: DateTime.parse(map['date']),
-      priority: map['priority'],
-      category: map['category']??'Other',
-      imagePath: map['imagePath'],
-    );
-  }
 
+  /// ✅ Factory for Firestore or Hive-safe map parsing
+  factory Entry.fromMap(Map<String, dynamic> map) {
+  final titleValue = map['title'] ?? map['titel'] ?? 'Untitled';
+
+  return Entry(
+    title: titleValue as String,
+    date: DateTime.parse(map['date'] ?? DateTime.now().toIso8601String()),
+    priority: map['priority'] ?? 1,
+    category: map['category'] ?? 'Other',
+    imagePath: map['imagePath'],
+  );
+}
+
+  /// Hive auto-generated methods need a save() placeholder if using HiveObject
   Future<void> save() async {}
 }

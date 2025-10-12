@@ -158,11 +158,11 @@ Future<List<Entry>> getAllEntries() async {
       final date=parseDate(data['data']);
 
       entriesList.add(Entry(
-        title: data['titel']??'', 
+        title: data['title']??'', 
         priority: data['priority']??1,
         date: date, 
         category: data['category']??'Other',
-        imagePath: data['imagePath'],
+        imagePath: data['image'],
         ));
     }
   }else{

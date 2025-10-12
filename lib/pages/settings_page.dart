@@ -22,13 +22,11 @@ class SettingsPage extends StatelessWidget {
               children: [
 
                 const Text('Account', style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color: Colors.orange)),
-
                 //todo:add account settings
                 //account settings
                 const SizedBox(height: 10),
 
                 const Text('Look', style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color: Colors.orange)),
-
                 //Theme
                 const Text(
                   'Theme',
@@ -38,10 +36,12 @@ class SettingsPage extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
+                    Text('Light Mode'),
                     CupertinoSwitch(
                       value: Provider.of<ThemeProvider>(context).isDarkMode, 
                       onChanged: (value)=>Provider.of<ThemeProvider>(context, listen: false).toggelTheme(),
-                    )
+                    ),
+                    Text('Dark Mode')
                   ],
                 ),
                 const SizedBox(height: 10),
@@ -56,7 +56,6 @@ class SettingsPage extends StatelessWidget {
                 ),
 
                 const Text('Privace', style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color: Colors.orange)),
-
                 //Storage Mode
                 const Text(
                   'Storage Mode',

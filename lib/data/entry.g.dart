@@ -20,19 +20,25 @@ class EntryAdapter extends TypeAdapter<Entry> {
       title: fields[0] as String,
       date: fields[1] as DateTime,
       priority: fields[2] as int,
+      category: fields[3] as String,
+      imagePath: fields[4] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Entry obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.title)
       ..writeByte(1)
       ..write(obj.date)
       ..writeByte(2)
-      ..write(obj.priority);
+      ..write(obj.priority)
+      ..writeByte(3)
+      ..write(obj.category)
+      ..writeByte(4)
+      ..write(obj.imagePath);
   }
 
   @override
