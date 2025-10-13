@@ -37,7 +37,7 @@ class SettingsPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text('Light Mode'),
-                    CupertinoSwitch(
+                    Switch(
                       value: Provider.of<ThemeProvider>(context).isDarkMode, 
                       onChanged: (value)=>Provider.of<ThemeProvider>(context, listen: false).toggelTheme(),
                     ),
@@ -47,12 +47,17 @@ class SettingsPage extends StatelessWidget {
                 const SizedBox(height: 10),
 
                 //toggel numbered List 
-                SwitchListTile(
-                  title: const Text('Enabel Numbered List'),
-                  value: context.watch<EntryProvider>().listEnabled, 
-                  onChanged: (val){
-                    context.read<EntryProvider>().toggleListEnabel(val);
-                  },
+                Row(
+                  children: [
+                    const Text('Enabel Numbered List'),
+                    Spacer(),
+                    Switch(
+                      value: context.watch<EntryProvider>().listEnabled, 
+                      onChanged: (val){
+                        context.read<EntryProvider>().toggleListEnabel(val);
+                      },
+                    ),
+                  ],
                 ),
 
                 const Text('Privace', style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color: Colors.orange)),
