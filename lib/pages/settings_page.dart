@@ -28,10 +28,10 @@ class SettingsPage extends StatelessWidget {
 
                 const Text('Look', style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color: Colors.orange)),
                 //Theme
-                const Text(
+                /*const Text(
                   'Theme',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
+                ),*/
                 const SizedBox(height: 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -61,11 +61,12 @@ class SettingsPage extends StatelessWidget {
                 ),
 
                 const Text('Privace', style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color: Colors.orange)),
+                
                 //Storage Mode
-                const Text(
+                /*const Text(
                   'Storage Mode',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
+                ),*/
                 const SizedBox(height: 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -120,10 +121,10 @@ class SettingsPage extends StatelessWidget {
                 const Text('Debuging', style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color: Colors.orange)),
                 
                 //Clear Entries
-                const Text(
+                /*const Text(
                   'Clear Entries',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
+                ),*/
                 const SizedBox(height: 10),
                 ElevatedButton.icon(
                   icon: const Icon(Icons.delete_forever),
@@ -161,9 +162,11 @@ class SettingsPage extends StatelessWidget {
                   }, 
                 ),
 
-                
-
               //relode streak widget
+              /*const Text(
+                  'Relode streak widget',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),*/
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.grey.shade200,
