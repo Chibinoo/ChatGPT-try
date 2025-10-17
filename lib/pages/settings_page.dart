@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/data/entry_provider.dart';
 import 'package:flutter_application_1/themes/theme_provider.dart';

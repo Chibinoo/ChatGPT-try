@@ -79,7 +79,7 @@ class _SortedPageState extends State<SortedPage> {
           body: SingleChildScrollView(
             child: Column(
               children: [
-                StreakTilesWidget(entriesByDay: entriesByDay),
+                StreakTilesWidget(),
                 const SizedBox(height: 5),
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
