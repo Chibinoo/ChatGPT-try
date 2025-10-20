@@ -7,6 +7,7 @@ ThemeData lightMode = ThemeData(
     secondary: Colors.blueGrey.shade200,
     secondaryContainer: Colors.teal[100], // ChoiceChip selected color
     error: Colors.red,
+    tertiary: Colors.black
   ),
   chipTheme: ChipThemeData(
     backgroundColor: Colors.grey[200]!, // ChoiceChip background

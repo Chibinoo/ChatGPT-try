@@ -7,6 +7,7 @@ ThemeData darkMode=ThemeData(
     secondary: Colors.blueGrey.shade700,
     secondaryContainer: Colors.amber[700], // <--- Set your desired chip selected color
     error: Colors.red[400]!,
+    tertiary: Colors.white
   ),
   chipTheme: ChipThemeData(
     backgroundColor: Colors.grey[800]!,

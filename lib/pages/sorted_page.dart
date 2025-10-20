@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/pages/add_entry_page.dart';
 import 'package:flutter_application_1/widgets/entry_list_widget.dart';
 import 'package:flutter_application_1/widgets/streak_tiles_widget.dart';
 import 'package:provider/provider.dart';
@@ -75,6 +76,17 @@ class _SortedPageState extends State<SortedPage> {
         return Scaffold(
           appBar: AppBar(
             title: const Text('Sorted Entries', style: TextStyle(fontSize: 25)),
+            actions: [
+              IconButton(
+                icon: Icon(Icons.add),
+                tooltip: 'New Entry',
+                onPressed: () {
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => AddEntryPage()),
+                  );
+                },
+              )
+            ]
           ),
           body: SingleChildScrollView(
             child: Column(

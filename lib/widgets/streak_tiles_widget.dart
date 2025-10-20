@@ -57,7 +57,7 @@ class StreakTilesWidget extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text('${day.day}', style: const TextStyle(fontSize: 12)),
+                  Text('${day.day}', style: TextStyle(fontSize: 12,color: colorScheme.tertiary)),
                 ],
               ),
             );

@@ -8,7 +8,7 @@ class StreakWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final streak = context.watch<EntryProvider>().streakCount;
-    final color = Theme.of(context).colorScheme.primary;
+    final color = Theme.of(context).colorScheme;
 
     return Card(
       margin: const EdgeInsets.all(16),
@@ -25,7 +25,7 @@ class StreakWidget extends StatelessWidget {
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: color,
+                color: color.tertiary,
               ),
             ),
           ],
