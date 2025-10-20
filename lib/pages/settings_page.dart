@@ -9,23 +9,36 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final entryProvider = Provider.of<EntryProvider>(context, listen: false);
-    
+
     return Scaffold(
-      appBar: AppBar(title: Text('Settings',style: TextStyle(fontSize: 25))),
+      appBar: AppBar(title: Text('Settings', style: TextStyle(fontSize: 25))),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Consumer<EntryProvider>(
-          builder: (context, provider, _){
+          builder: (context, provider, _) {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
-                const Text('Account', style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color: Colors.orange)),
+                const Text(
+                  'Account',
+                  style: TextStyle(
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.orange,
+                  ),
+                ),
                 //todo:add account settings
                 //account settings
                 const SizedBox(height: 10),
 
-                const Text('Look', style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color: Colors.orange)),
+                const Text(
+                  'Look',
+                  style: TextStyle(
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.orange,
+                  ),
+                ),
                 //Theme
                 /*const Text(
                   'Theme',
@@ -37,30 +50,40 @@ class SettingsPage extends StatelessWidget {
                   children: [
                     Text('Light Mode'),
                     Switch(
-                      value: Provider.of<ThemeProvider>(context).isDarkMode, 
-                      onChanged: (value)=>Provider.of<ThemeProvider>(context, listen: false).toggelTheme(),
+                      value: Provider.of<ThemeProvider>(context).isDarkMode,
+                      onChanged: (value) => Provider.of<ThemeProvider>(
+                        context,
+                        listen: false,
+                      ).toggelTheme(),
                     ),
-                    Text('Dark Mode')
+                    Text('Dark Mode'),
                   ],
                 ),
                 const SizedBox(height: 10),
 
-                //toggel numbered List 
+                //toggel numbered List
                 Row(
                   children: [
                     const Text('Enabel Numbered List'),
                     Spacer(),
                     Switch(
-                      value: context.watch<EntryProvider>().listEnabled, 
-                      onChanged: (val){
+                      value: context.watch<EntryProvider>().listEnabled,
+                      onChanged: (val) {
                         context.read<EntryProvider>().toggleListEnabel(val);
                       },
                     ),
                   ],
                 ),
 
-                const Text('Privace', style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color: Colors.orange)),
-                
+                const Text(
+                  'Privace',
+                  style: TextStyle(
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.orange,
+                  ),
+                ),
+
                 //Storage Mode
                 /*const Text(
                   'Storage Mode',
@@ -73,52 +96,61 @@ class SettingsPage extends StatelessWidget {
                     const Text('Local Storage'),
                     Switch(
                       value: provider.useCloud,
-                      onChanged: (value)async{
-                        if(!value&&provider.useCloud){
+                      onChanged: (value) async {
+                        if (!value && provider.useCloud) {
                           //switch from cloud to local
-                          bool? deleteCloud=await showDialog<bool>(
+                          bool? deleteCloud = await showDialog<bool>(
                             context: context,
-                            builder: (ctx)=>AlertDialog(
+                            builder: (ctx) => AlertDialog(
                               title: const Text('Delete Cloud Data?'),
                               content: const Text(
                                 'Do you want to delete your cloud data after syncing it ti local storage?',
                               ),
                               actions: [
                                 TextButton(
-                                  onPressed: ()=>Navigator.of(ctx).pop(true), 
-                                  child: const Text('Delete Cloud Data')
-                                )
+                                  onPressed: () => Navigator.of(ctx).pop(true),
+                                  child: const Text('Delete Cloud Data'),
+                                ),
                               ],
-                            )
+                            ),
                           );
-                          if(deleteCloud==null)return;//dissmissed
+                          if (deleteCloud == null) return; //dissmissed
                           await provider.mergeCloudToLocal(deleteCloud);
                           // ignore: use_build_context_synchronously
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text(deleteCloud
-                                ?'Cloud data merged and deleted'
-                                :'Cloud data merged but kept online'
+                              content: Text(
+                                deleteCloud
+                                    ? 'Cloud data merged and deleted'
+                                    : 'Cloud data merged but kept online',
                               ),
                             ),
                           );
-                        } else if(value&& !provider.useCloud){
+                        } else if (value && !provider.useCloud) {
                           //switching local to cloud
                           await provider.toggelStorage(true);
                           // ignore: use_build_context_synchronously
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content:Text('Local data merged to Cloud')),
+                              content: Text('Local data merged to Cloud'),
+                            ),
                           );
                         }
-                      }
+                      },
                     ),
                     const Text('Cloud Storage'),
                   ],
                 ),
-                
-                const Text('Debuging', style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color: Colors.orange)),
-                
+
+                const Text(
+                  'Debuging',
+                  style: TextStyle(
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.orange,
+                  ),
+                ),
+
                 //Clear Entries
                 /*const Text(
                   'Clear Entries',
@@ -130,63 +162,116 @@ class SettingsPage extends StatelessWidget {
                   label: const Text('Delete All Entries'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.grey.shade200,
-                    foregroundColor: Colors.red
+                    foregroundColor: Colors.red,
                   ),
-                  onPressed: ()async{
-                    final confirm=await showDialog<bool>(
-                      context: context, 
-                      builder: (ctx)=>AlertDialog(
+                  onPressed: () async {
+                    final confirm = await showDialog<bool>(
+                      context: context,
+                      builder: (ctx) => AlertDialog(
                         title: const Text('Confirm Deletion'),
-                        content: const Text('Are you sure you want to delet ALL entries?'),
+                        content: const Text(
+                          'Are you sure you want to delet ALL entries?',
+                        ),
                         actions: [
                           TextButton(
-                            onPressed: ()=>Navigator.of(ctx).pop(false), 
-                            child: const Text('Cancel')
+                            onPressed: () => Navigator.of(ctx).pop(false),
+                            child: const Text('Cancel'),
                           ),
                           ElevatedButton(
-                            onPressed: ()=>Navigator.of(ctx).pop(true),
-                            child: const Text('Delete')
-                          )
+                            onPressed: () => Navigator.of(ctx).pop(true),
+                            child: const Text('Delete'),
+                          ),
                         ],
                       ),
                     );
-                    if (confirm==true){
+                    if (confirm == true) {
                       provider.clearAllEntries();
                       // ignore: use_build_context_synchronously
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text('All entries have been deleted')),
+                          content: Text('All entries have been deleted'),
+                        ),
                       );
                     }
-                  }, 
+                  },
                 ),
 
-              //relode streak widget
-              /*const Text(
+                //relode streak widget
+                /*const Text(
                   'Relode streak widget',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),*/
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.grey.shade200,
                     foregroundColor: Colors.red,
+                  ),
+                  onPressed: () async {
+                    // If you want to reload streak data, call your provider's method here
+                    await entryProvider
+                        .loadEntries(); // Or your streak reload logic
+                    // ignore: use_build_context_synchronously
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Streak reloaded!')),
+                    );
+                  },
+                  child: const Text('Reload Streak Widget'),
                 ),
-            onPressed: () async {
-              // If you want to reload streak data, call your provider's method here
-              await entryProvider.loadEntries(); // Or your streak reload logic
-              // ignore: use_build_context_synchronously
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Streak reloaded!')),
-              );
-              
-            },
-            child: const Text('Reload Streak Widget'),
-          ),
-              ]
+
+                Row(
+                  children: [
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.grey.shade200,
+                    foregroundColor: Colors.red,
+                      ),
+                      onPressed: () async {
+                        final provider = context.read<EntryProvider>();
+                    
+                        final date = await showDatePicker(
+                          context: context,
+                          initialDate: provider.currentTime,
+                          firstDate: DateTime(2020),
+                          lastDate: DateTime(2030),
+                        );
+                    
+                        if (date != null) {
+                          final time = await showTimePicker(
+                            // ignore: use_build_context_synchronously
+                            context: context,
+                            initialTime: TimeOfDay.fromDateTime(provider.currentTime),
+                          );
+                    
+                          final newDateTime = DateTime(
+                            date.year,
+                            date.month,
+                            date.day,
+                            time?.hour ?? 0,
+                            time?.minute ?? 0,
+                          );
+                    
+                          provider.setMockDate(newDateTime);
+                        }
+                      },
+                      child: const Text('Set Mock Date/Time'),
+                    ),
+                    Spacer(),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.grey.shade200,
+                    foregroundColor: Colors.red,
+                      ),
+                      onPressed: () =>
+                          context.read<EntryProvider>().clearMockDate(),
+                      child: const Text('Reset to Real Time'),
+                    ),
+                  ],
+                ),
+              ],
             );
-          }
+          },
         ),
-      )
+      ),
     );
   }
 }

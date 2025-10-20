@@ -65,7 +65,7 @@ class _AddEntryPageState extends State<AddEntryPage> {
       // Create new
       final newEntry = Entry(
         title: _titleControler.text,
-        date: DateTime.now(),
+        date: provider.currentTime,
         priority: _priority.round(),
         category: _category,
         imagePath: _imagePath,

@@ -13,6 +13,27 @@ class EntryProvider extends ChangeNotifier {
   List<Entry> _entries = [];
   List<Entry> get entries => _entries;
 
+  // -------------------- MOCK TIME SYSTEM --------------------
+
+  DateTime? _mockNow;
+
+  /// Returns the active time source (mock or real)
+  DateTime get currentTime => _mockNow ?? DateTime.now();
+
+  /// Set a mock date for debugging
+  void setMockDate(DateTime date) {
+    _mockNow = date;
+    debugPrint('🕒 Mock time activated: ${_mockNow!.toIso8601String()}');
+    notifyListeners();
+  }
+
+  /// Clear mock date and return to system time
+  void clearMockDate() {
+    debugPrint('⏱️ Mock time cleared — using real system clock.');
+    _mockNow = null;
+    notifyListeners();
+  }
+
   EntryProvider() {
     _loadNumberedList();
   }
@@ -41,7 +62,6 @@ class EntryProvider extends ChangeNotifier {
 
   Future<void> loadEntries() async {
     if (useCloud) {
-      // Use Firestore
       final snapshot = await _firestore.get();
       _entries = snapshot.docs.map((doc) {
         final data = doc.data();
@@ -56,13 +76,12 @@ class EntryProvider extends ChangeNotifier {
         );
       }).toList();
     } else {
-      // Use Hive
       _entries = _localBox.values.toList();
     }
     notifyListeners();
   }
 
-  // -------------------- CRUD(Creat,Read,Update,Delete) OPERATIONS --------------------
+  // -------------------- CRUD OPERATIONS --------------------
 
   Future<void> addEntry(Entry entry) async {
     if (useCloud) {
@@ -191,21 +210,18 @@ class EntryProvider extends ChangeNotifier {
 
   // -------------------- STREAK SYSTEM --------------------
 
-  /// Returns how many consecutive days (including today) have entries.
   int get streakCount {
     if (entries.isEmpty) return 0;
 
-    final today = DateTime.now();
+    final today = currentTime;
     final todayDate = _onlyDate(today);
 
-    // Extract unique normalized dates
     final uniqueDates = entries
         .map((e) => _onlyDate(e.date))
         .toSet()
         .toList()
-      ..sort((a, b) => b.compareTo(a)); // newest first
+      ..sort((a, b) => b.compareTo(a));
 
-    // If no entry today, streak is 0
     if (uniqueDates.first != todayDate) return 0;
 
     int streak = 1;
@@ -224,25 +240,21 @@ class EntryProvider extends ChangeNotifier {
     return streak;
   }
 
-  /// Normalizes a DateTime to only the date (year, month, day)
   DateTime _onlyDate(DateTime d) => DateTime(d.year, d.month, d.day);
 
-  /// Returns the last 7 calendar days including today
   List<DateTime> get last7Days {
-    final now = DateTime.now();
+    final now = currentTime;
     return List.generate(7, (i) {
       final day = now.subtract(Duration(days: 6 - i));
       return _onlyDate(day);
     });
   }
 
-  /// Returns whether an entry exists on a given date
   bool hasEntryOn(DateTime day) {
     final normalized = _onlyDate(day);
     return entries.any((e) => _onlyDate(e.date) == normalized);
   }
 
-  /// Returns a map of each of the last 7 days → whether they have entries
   Map<DateTime, bool> get entriesByDay {
     final map = <DateTime, bool>{};
     for (final day in last7Days) {
