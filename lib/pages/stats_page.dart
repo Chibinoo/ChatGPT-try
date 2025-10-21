@@ -26,7 +26,7 @@ class StatsPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Statistics',style: TextStyle(fontSize: 25)),
+        title: const Text('Statistics', style: TextStyle(fontSize: 25)),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -34,91 +34,132 @@ class StatsPage extends StatelessWidget {
           children: [
             StreakWidget(),
             const SizedBox(height: 5),
+            
             CalenderStreakWidget(),
             const SizedBox(height: 5),
-            const Text(
-              'Entries per priority',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 10),
-            SizedBox(
-              height: 200,
-              child: BarChart(
-                BarChartData(
-                  barGroups: priorityCount.entries.map((entry) {
-                    final priority = entry.key;
-                    return BarChartGroupData(
-                      x: entry.key,
-                      barRods: [
-                        BarChartRodData(
-                          toY: entry.value.toDouble(),
-                          color: _getPriorityColor(priority),
-                        ),
-                      ],
-                    );
-                  }).toList(),
-                  titlesData: FlTitlesData(
-                    bottomTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        getTitlesWidget: (value, _) =>
-                            Text(value.toInt().toString()),
+
+            Card(
+              margin: const EdgeInsets.all(16),
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadiusGeometry.circular(12),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  children: [
+                    const Text(
+                      'Entries per priority',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    leftTitles: AxisTitles(
-                      sideTitles: SideTitles(showTitles: true, interval: 1),
+                    SizedBox(height: 10),
+                    SizedBox(
+                      height: 200,
+                      child: BarChart(
+                        BarChartData(
+                          barGroups: priorityCount.entries.map((entry) {
+                            final priority = entry.key;
+                            return BarChartGroupData(
+                              x: entry.key,
+                              barRods: [
+                                BarChartRodData(
+                                  toY: entry.value.toDouble(),
+                                  color: _getPriorityColor(priority),
+                                ),
+                              ],
+                            );
+                          }).toList(),
+                          titlesData: FlTitlesData(
+                            bottomTitles: AxisTitles(
+                              sideTitles: SideTitles(
+                                showTitles: true,
+                                getTitlesWidget: (value, _) =>
+                                    Text(value.toInt().toString()),
+                              ),
+                            ),
+                            leftTitles: AxisTitles(
+                              sideTitles: SideTitles(
+                                showTitles: true,
+                                interval: 1,
+                              ),
+                            ),
+                            rightTitles: const AxisTitles(
+                              sideTitles: SideTitles(showTitles: false),
+                            ),
+                            topTitles: const AxisTitles(
+                              sideTitles: SideTitles(showTitles: false),
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
-                    rightTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
-                    ),
-                    topTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
-                    ),
-                  ),
+                  ],
                 ),
               ),
             ),
-            const SizedBox(height: 30),
-            const Text(
-              'Category Distribution',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(
-              height: 250,
-              child: PieChart(
-                PieChartData(
-                  sections: categoryCounts.isEmpty
-                      ? [
-                          PieChartSectionData(
-                            value: 1,
-                            title: 'No Data',
-                            radius: 80,
-                            color: Colors.grey[300]!,
-                            titleStyle: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black54,
-                            ),
-                          ),
-                        ]
-                      : categoryCounts.entries.map((entry) {
-                          final percentage =
-                              (entry.value / entries.length) * 100;
-                          return PieChartSectionData(
-                            value: entry.value.toDouble(),
-                            title:
-                                '${entry.key}\n${percentage.toStringAsFixed(1)}%',
-                            radius: 80,
-                            color: _getCategoryColor(entry.key),
-                            titleStyle: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          );
-                        }).toList(),
-                  sectionsSpace: 2,
-                  centerSpaceRadius: 30,
+
+            const SizedBox(height: 5),
+
+            Card(
+              margin: const EdgeInsets.all(16),
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadiusGeometry.circular(12),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  children: [
+                    const Text(
+                      'Category Distribution',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 250,
+                      child: PieChart(
+                        PieChartData(
+                          sections: categoryCounts.isEmpty
+                              ? [
+                                  PieChartSectionData(
+                                    value: 1,
+                                    title: 'No Data',
+                                    radius: 80,
+                                    color: Colors.grey[300]!,
+                                    titleStyle: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black54,
+                                    ),
+                                  ),
+                                ]
+                              : categoryCounts.entries.map((entry) {
+                                  final percentage =
+                                      (entry.value / entries.length) * 100;
+                                  return PieChartSectionData(
+                                    value: entry.value.toDouble(),
+                                    title:
+                                        '${entry.key}\n${percentage.toStringAsFixed(1)}%',
+                                    radius: 80,
+                                    color: _getCategoryColor(entry.key),
+                                    titleStyle: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  );
+                                }).toList(),
+                          sectionsSpace: 2,
+                          centerSpaceRadius: 30,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),

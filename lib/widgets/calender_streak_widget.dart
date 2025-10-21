@@ -136,7 +136,7 @@ class _CalenderStreakWidgetState extends State<CalenderStreakWidget> {
                     duration: const Duration(milliseconds: 200),
                     decoration: BoxDecoration(
                       color: hasEntry
-                      ?theme.primary
+                      ?theme.secondaryContainer
                       :theme.surface,
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
