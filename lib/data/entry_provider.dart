@@ -15,22 +15,22 @@ class EntryProvider extends ChangeNotifier {
 
   // -------------------- MOCK TIME SYSTEM --------------------
 
-  DateTime? _mockNow;
+  DateTime? mockNow;
 
   /// Returns the active time source (mock or real)
-  DateTime get currentTime => _mockNow ?? DateTime.now();
+  DateTime get currentTime => mockNow ?? DateTime.now();
 
   /// Set a mock date for debugging
   void setMockDate(DateTime date) {
-    _mockNow = date;
-    debugPrint('🕒 Mock time activated: ${_mockNow!.toIso8601String()}');
+    mockNow = date;
+    debugPrint('🕒 Mock time activated: ${mockNow!.toIso8601String()}');
     notifyListeners();
   }
 
   /// Clear mock date and return to system time
   void clearMockDate() {
     debugPrint('⏱️ Mock time cleared — using real system clock.');
-    _mockNow = null;
+    mockNow = null;
     notifyListeners();
   }
 

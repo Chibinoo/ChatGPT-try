@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/data/entry_provider.dart';
+import 'package:flutter_application_1/widgets/calender_streak_widget.dart';
 import 'package:flutter_application_1/widgets/streak_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -32,6 +33,8 @@ class StatsPage extends StatelessWidget {
         child: Column(
           children: [
             StreakWidget(),
+            const SizedBox(height: 5),
+            CalenderStreakWidget(),
             const SizedBox(height: 5),
             const Text(
               'Entries per priority',
