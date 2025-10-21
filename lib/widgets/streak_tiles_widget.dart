@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/data/entry_provider.dart';
+import 'package:flutter_application_1/themes/theme_provider.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -14,6 +15,7 @@ class StreakTilesWidget extends StatelessWidget {
     final streakCount = provider.streakCount;
 
     final colorScheme = Theme.of(context).colorScheme;
+    final themeProvider = context.watch<ThemeProvider>();
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
@@ -49,15 +51,21 @@ class StreakTilesWidget extends StatelessWidget {
                         DateFormat('E').format(day).substring(0, 1),
                         style: TextStyle(
                           color: hasEntry
-                              ? Colors.white
-                              : colorScheme.onSurfaceVariant,
+                              ? Colors.black
+                              : colorScheme.surface,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text('${day.day}', style: TextStyle(fontSize: 12,color: colorScheme.tertiary)),
+                  Text(
+                    '${day.day}',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: colorScheme.tertiary,
+                    ),
+                  ),
                 ],
               ),
             );
@@ -68,14 +76,16 @@ class StreakTilesWidget extends StatelessWidget {
             width: 50,
             height: 50,
             decoration: BoxDecoration(
-              color: Colors.orange,
+              color: colorScheme.secondaryContainer,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Center(
               child: Text(
                 '$streakCount🔥',
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: themeProvider.isDarkMode
+                      ? Colors.white
+                      : Colors.black,
                   fontWeight: FontWeight.bold,
                 ),
               ),
