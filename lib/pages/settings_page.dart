@@ -9,6 +9,7 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final entryProvider = Provider.of<EntryProvider>(context, listen: false);
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       appBar: AppBar(title: Text('Settings', style: TextStyle(fontSize: 25))),
@@ -19,24 +20,24 @@ class SettingsPage extends StatelessWidget {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'Account',
                   style: TextStyle(
                     fontSize: 25,
                     fontWeight: FontWeight.bold,
-                    color: Colors.orange,
+                    color: colorScheme.secondaryContainer,
                   ),
                 ),
                 //todo:add account settings
                 //account settings
                 const SizedBox(height: 10),
 
-                const Text(
+                Text(
                   'Look',
                   style: TextStyle(
                     fontSize: 25,
                     fontWeight: FontWeight.bold,
-                    color: Colors.orange,
+                    color: colorScheme.secondaryContainer,
                   ),
                 ),
                 //Theme
@@ -75,12 +76,12 @@ class SettingsPage extends StatelessWidget {
                   ],
                 ),
 
-                const Text(
+                 Text(
                   'Privace',
                   style: TextStyle(
                     fontSize: 25,
                     fontWeight: FontWeight.bold,
-                    color: Colors.orange,
+                    color: colorScheme.secondaryContainer,
                   ),
                 ),
 
@@ -142,12 +143,12 @@ class SettingsPage extends StatelessWidget {
                   ],
                 ),
 
-                const Text(
+                Text(
                   'Debuging',
                   style: TextStyle(
                     fontSize: 25,
                     fontWeight: FontWeight.bold,
-                    color: Colors.orange,
+                    color: colorScheme.secondaryContainer,
                   ),
                 ),
 

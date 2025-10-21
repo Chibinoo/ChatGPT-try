@@ -5,7 +5,7 @@ ThemeData lightMode = ThemeData(
     surface: Colors.white,
     primary: Colors.blueGrey.shade500,
     secondary: Colors.blueGrey.shade200,
-    secondaryContainer: Colors.teal[100], // ChoiceChip selected color
+    secondaryContainer: Colors.teal, // ChoiceChip selected color
     error: Colors.red,
     tertiary: Colors.black
   ),
