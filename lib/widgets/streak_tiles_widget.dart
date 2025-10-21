@@ -50,9 +50,7 @@ class StreakTilesWidget extends StatelessWidget {
                       child: Text(
                         DateFormat('E').format(day).substring(0, 1),
                         style: TextStyle(
-                          color: hasEntry
-                              ? Colors.black
-                              : colorScheme.surface,
+                          color: colorScheme.tertiary,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
