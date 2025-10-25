@@ -56,9 +56,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final provider=Provider.of<EntryProvider>(context, listen: false);
+/*    final provider=Provider.of<EntryProvider>(context, listen: false);
     provider.listenToAuthChanges(context);
-    
+*/    
     return Consumer<ThemeProvider>(
       builder: (context, themeProvider, _) {
     return  MaterialApp(
