@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/data/entry_provider.dart';
+import 'package:flutter_application_1/pages/login_page.dart';
 import 'package:flutter_application_1/themes/theme_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -10,6 +12,7 @@ class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final entryProvider = Provider.of<EntryProvider>(context, listen: false);
     final colorScheme = Theme.of(context).colorScheme;
+    final user=FirebaseAuth.instance.currentUser;
 
     return Scaffold(
       appBar: AppBar(title: Text('Settings', style: TextStyle(fontSize: 25))),
@@ -30,6 +33,24 @@ class SettingsPage extends StatelessWidget {
                 ),
                 //todo:add account settings
                 //account settings
+                ListTile(
+                  title: Text(user==null?'Sign in':'Sign Out'),
+                  subtitle: Text(user==null
+                    ?'Sign in to sync your data to the cloud'
+                    :'Signed in as ${user.email??user.displayName}'  
+                  ),
+                  leading: Icon(user==null?Icons.login:Icons.logout),
+                  onTap: () {
+                    if(user==null){
+                      Navigator.push(
+                        context, 
+                        MaterialPageRoute(builder: (_)=>const LoginPage()),
+                        );
+                    }else{
+                      FirebaseAuth.instance.signOut();
+                    }
+                  },
+                ),
                 const SizedBox(height: 10),
 
                 Text(

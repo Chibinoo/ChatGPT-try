@@ -1,11 +1,13 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 import 'package:flutter_application_1/data/entry.dart';
 import 'package:flutter_application_1/data/entry_provider.dart';
 import 'package:flutter_application_1/themes/theme_provider.dart';
+import 'login_page.dart';
 
 class AddEntryPage extends StatefulWidget {
   final Entry? existingEntry;//null if creating new
@@ -93,98 +95,124 @@ class _AddEntryPageState extends State<AddEntryPage> {
 
   @override
   Widget build(BuildContext context) {
-    final theme=Theme.of(context);
+  final user = FirebaseAuth.instance.currentUser;
+  final theme = Theme.of(context);
+  final themeProvider = Provider.of<ThemeProvider>(context); // <-- Add this line
+
     return Scaffold(
       appBar: AppBar(
-        title: 
-        Text(widget.existingEntry==null?"Add Entry":"Edit Entry"),
+        title: Text(widget.existingEntry == null ? "Add Entry" : "Edit Entry"),
         automaticallyImplyLeading: false,
+        actions: [
+          TextButton.icon(
+            onPressed: () {
+              if (user == null) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const LoginPage()),
+                );
+              } else {
+                FirebaseAuth.instance.signOut();
+              }
+            },
+            icon: Icon(
+              user == null ? Icons.login : Icons.logout,
+              color: theme.colorScheme.tertiary, // Use theme color here
+            ),
+            label: Text(
+              user == null ? 'Login' : 'Logout',
+              style: TextStyle(
+                color: themeProvider.isDarkMode ? Colors.white : Colors.black, // Use themeProvider here
+              ),
+            ),
+          )
+        ],
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            //Titel
-            TextField(
-              controller: _titleControler,
-              decoration: const InputDecoration(
-                labelText: "Titel",
-                border: OutlineInputBorder(),
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              //Titel
+              TextField(
+                controller: _titleControler,
+                decoration: const InputDecoration(
+                  labelText: "Titel",
+                  border: OutlineInputBorder(),
+                ),
               ),
-            ),
-            const SizedBox(height: 20),
-            //Priority Slider
-            Text("Priority: ${_priority.round()}",
-              style: const TextStyle(fontWeight: FontWeight.bold)),
-            Slider(
-              value: _priority,
-              min: 1,
-              max: 5,
-              divisions: 4,
-              label: _priority.round().toString(), 
-              onChanged: (val)=>setState(()=>_priority=val),
-            ),
-            const SizedBox(height: 20),
-            //Category selector
-            const Text("Category",
-              style: TextStyle(fontWeight: FontWeight.bold)),
-            const SizedBox(height: 10),
-            _buildCategorySelector(),
-            const SizedBox(height: 20),
-            //Image picker
-            if (_imagePath!=null)
-            Center(
-              child: Image.file(
-                File(_imagePath!),
-                height: 150,
-                fit: BoxFit.cover,
+              const SizedBox(height: 20),
+              //Priority Slider
+              Text("Priority: ${_priority.round()}",
+                style: const TextStyle(fontWeight: FontWeight.bold)),
+              Slider(
+                value: _priority,
+                min: 1,
+                max: 5,
+                divisions: 4,
+                label: _priority.round().toString(), 
+                onChanged: (val)=>setState(()=>_priority=val),
               ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                IconButton(
-                  onPressed: ()=>_pickImage(ImageSource.camera), 
-                  icon: const Icon(Icons.photo_camera)
+              const SizedBox(height: 20),
+              //Category selector
+              const Text("Category",
+                style: TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 10),
+              _buildCategorySelector(),
+              const SizedBox(height: 20),
+              //Image picker
+              if (_imagePath!=null)
+              Center(
+                child: Image.file(
+                  File(_imagePath!),
+                  height: 150,
+                  fit: BoxFit.cover,
                 ),
-                IconButton(
-                  onPressed: ()=>_pickImage(ImageSource.gallery), 
-                  icon: Icon(Icons.photo_library)
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Center(
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: theme.colorScheme.secondaryContainer,
-                  foregroundColor: Provider.of<ThemeProvider>(context).isDarkMode
-                      ? Colors.white // or any color for dark mode
-                      : Colors.black,     // or any color for light mode
-                ),
-                onPressed: _saveEntry,
-                child: const Text('Save'),
               ),
-            ),
-            const SizedBox(height: 10),
-            Center(
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: theme.colorScheme.secondaryContainer,
-                  foregroundColor: Provider.of<ThemeProvider>(context).isDarkMode
-                      ? Colors.white // or any color for dark mode
-                      : Colors.black,     // or any color for light mode
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    onPressed: ()=>_pickImage(ImageSource.camera), 
+                    icon: const Icon(Icons.photo_camera)
+                  ),
+                  IconButton(
+                    onPressed: ()=>_pickImage(ImageSource.gallery), 
+                    icon: Icon(Icons.photo_library)
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Center(
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: theme.colorScheme.secondaryContainer,
+                    foregroundColor: themeProvider.isDarkMode
+                        ? Colors.white
+                        : Colors.black,
+                  ),
+                  onPressed: _saveEntry,
+                  child: const Text('Save'),
                 ),
-                onPressed: (){
-                   Navigator.pushReplacementNamed(context, '/main');
-                },
-                child: const Text('Cancel'),
+              ),
+              const SizedBox(height: 10),
+              Center(
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: theme.colorScheme.secondaryContainer,
+                    foregroundColor: themeProvider.isDarkMode
+                        ? Colors.white
+                        : Colors.black,
+                  ),
+                  onPressed: (){
+                     Navigator.pushReplacementNamed(context, '/main');
+                  },
+                  child: const Text('Cancel'),
+                )
               )
-            )
-          ],
+            ],
+          ),
         ),
-      ),
-    );
+      );
   }
 }

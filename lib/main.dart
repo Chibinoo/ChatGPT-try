@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/data/entry.dart';
+import 'package:flutter_application_1/firebase_options.dart';
 import 'package:flutter_application_1/pages/add_entry_page.dart';
 import 'package:flutter_application_1/themes/theme_provider.dart';
 import 'package:flutter_application_1/widgets/widget_tree.dart';
@@ -13,7 +14,9 @@ void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   
   // Initialize Firebase (for cloud mode)
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform
+  );
 
   // ⚙️ Run migration ONCE
   //await migrateTitelToTitle();
@@ -38,8 +41,8 @@ void main() async{
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider.value(
-          value: entryProvider,
+        ChangeNotifierProvider(
+          create: (_)=>EntryProvider()..init(),
         ),
         ChangeNotifierProvider.value(value: ThemeProvider())
       ],
@@ -53,6 +56,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final provider=Provider.of<EntryProvider>(context, listen: false);
+    provider.listenToAuthChanges(context);
+    
     return Consumer<ThemeProvider>(
       builder: (context, themeProvider, _) {
     return  MaterialApp(
