@@ -6,6 +6,7 @@ import 'package:flutter_application_1/themes/theme_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -15,14 +16,49 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+  final user = FirebaseAuth.instance.currentUser;
+  bool _isUploading=false;
+
   Future<void> _pickAndUploadProfilePhoto() async {
-    final user = FirebaseAuth.instance.currentUser;
     final picker = ImagePicker();
     final picked = await picker.pickImage(source: ImageSource.gallery);
     if (picked == null) return;
     final file = File(picked.path);
     await user?.updatePhotoURL(file.path);
-    setState(() {});
+    setState(() =>_isUploading=true);
+
+    try{
+      final file=File(picked.path);
+      final storageRef=FirebaseStorage.instance
+        .ref()
+        .child('user_profile_photo/${user!.uid}.jpeg');
+
+      //Upload image
+      await storageRef.putFile(file);
+
+      //Get download URL
+      final downloadUrl=await storageRef.getDownloadURL();
+
+      //Update user profile
+      await user!.updatePhotoURL(downloadUrl);
+      await user!.reload();
+
+      setState(() {
+        _isUploading=false;
+      });
+
+      if(mounted){
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Profile photo updated!')),
+        );
+      }
+    }catch(e){
+      setState(()=>_isUploading=false);
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to upload photo: $e')),
+      );
+    }
   }
 
   Future<void> _resetPassword() async {
@@ -32,6 +68,114 @@ class _SettingsPageState extends State<SettingsPage> {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Password reset email sent')),
+      );
+    }
+  }
+
+  Future<void>_changeName()async{
+    final user=FirebaseAuth.instance.currentUser;
+    if(user==null)return;
+
+    final controller=TextEditingController();
+    final newName=await showDialog<String>
+    (
+      context: context, 
+      builder: (context){
+        return AlertDialog(
+          title: const Text("Change Username"),
+          content: TextField(
+            controller: controller,
+            decoration: InputDecoration(
+              labelText: "New Username",
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: ()=>Navigator.pop(context), 
+              child: const Text("Cancel"),
+              ),
+            ElevatedButton(
+              onPressed: ()=>Navigator.pop(context, controller.text), 
+              child: const Text("Save")
+            )
+          ],
+        );
+      },
+    );
+    if(newName==null||newName.isEmpty)return;
+
+    await user.updateDisplayName(newName);
+    await user.reload();
+
+    // ignore: use_build_context_synchronously
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content:Text("Username updated")),
+      );
+  }
+
+  Future<void>_changeMail()async{
+    final user=FirebaseAuth.instance.currentUser;
+    if(user==null)return;
+
+    final emailController=TextEditingController();
+    final passwordController=TextEditingController();
+
+    final result=await showDialog<Map<String, String>>
+    (
+      context: context, 
+      builder: (context){
+        return AlertDialog(
+          title: const Text("Change Email"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: emailController,
+                decoration: const InputDecoration(labelText: "New Email"),
+              ),
+              TextField(
+                controller: passwordController,
+                obscureText: true,
+                decoration: const InputDecoration(labelText: "Password"),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: ()=>Navigator.pop(context), 
+              child: const Text("Cancel"),
+            ),
+            ElevatedButton(
+              onPressed: (){Navigator.pop(context, {
+                "email":emailController.text,
+                "password":passwordController.text
+              });
+              },
+              child: const Text("Update"),
+            ),
+          ],
+        );
+      },
+    );
+    if(result==null)return;
+
+    try{
+      final credential = EmailAuthProvider.credential(
+        email: user.email!,
+        password: result["password"]!,
+      );
+
+      await user.reauthenticateWithCredential(credential);
+      await user.updateEmail(result["email"]!);
+
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Email Updated Succsecfully")),
+        );
+    }on FirebaseAuthException catch(e){
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message??"Error Updating Email")),
       );
     }
   }
@@ -46,7 +190,7 @@ class _SettingsPageState extends State<SettingsPage> {
     return Scaffold(
       appBar: AppBar(title: Text('Settings', style: TextStyle(fontSize: 25))),
       body: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Consumer<EntryProvider>(
           builder: (context, provider, _) {
             return SingleChildScrollView(
@@ -68,17 +212,6 @@ class _SettingsPageState extends State<SettingsPage> {
                         children: [
                           Row(
                             children: [
-                              CircleAvatar(
-                                radius: 25,
-                                backgroundImage: user.photoURL != null
-                                    ? (user.photoURL!.startsWith('http')
-                                        ? NetworkImage(user.photoURL!)
-                                        : FileImage(File(user.photoURL!))
-                                            as ImageProvider)
-                                    : const AssetImage('assets/images/default_avatar.png'),
-                              ),
-                              const SizedBox(height: 10),
-                              Spacer(),
                               Column(
                                 children: [
                                   Text(
@@ -95,13 +228,24 @@ class _SettingsPageState extends State<SettingsPage> {
                                   ),
                                 ],
                               ),
+                              Spacer(),
+                              CircleAvatar(
+                                radius: 25,
+                                backgroundImage: user.photoURL != null
+                                  ? NetworkImage(user.photoURL!)
+                                  : const AssetImage('assets/images/default_avatar.png')
+                                    as ImageProvider,
+                              ),
+                              if(_isUploading)
+                                const CircularProgressIndicator(color: Colors.white),
+                              const SizedBox(height: 10),
                             ],
                           ),
                           const SizedBox(height: 16),
                           Row(
                             children: [
                               ElevatedButton.icon(
-                                onPressed: _pickAndUploadProfilePhoto,
+                                onPressed: _isUploading?null:_pickAndUploadProfilePhoto,
                                 icon: Icon(Icons.photo_camera, color: colorScheme.tertiary),
                                 label: Text('Change Photo',style: TextStyle(color: colorScheme.tertiary)),
                               ),
@@ -110,6 +254,22 @@ class _SettingsPageState extends State<SettingsPage> {
                                 onPressed: _resetPassword,
                                 icon: Icon(Icons.lock_reset, color: colorScheme.tertiary),
                                 label: Text('Reset Password',style: TextStyle(color: colorScheme.tertiary)),
+                              ),
+                            ],
+                          ),
+                           const SizedBox(height: 16),
+                          Row(
+                            children: [
+                              ElevatedButton.icon(
+                                onPressed:()=>_changeName(),
+                                icon: Icon(Icons.edit, color: colorScheme.tertiary),
+                                label: Text('Change Username',style: TextStyle(color: colorScheme.tertiary)),
+                              ),
+                              Spacer(),
+                              ElevatedButton.icon(
+                                onPressed: ()=>_changeMail(),
+                                icon: Icon(Icons.mail_outline, color: colorScheme.tertiary),
+                                label: Text('Change Email',style: TextStyle(color: colorScheme.tertiary)),
                               ),
                             ],
                           ),
