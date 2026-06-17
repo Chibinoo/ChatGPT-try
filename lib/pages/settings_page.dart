@@ -166,7 +166,7 @@ class _SettingsPageState extends State<SettingsPage> {
       );
 
       await user.reauthenticateWithCredential(credential);
-      await user.updateEmail(result["email"]!);
+      //await user.updateEmail(result["email"]!);
 
       // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
