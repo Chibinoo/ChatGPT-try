@@ -20,7 +20,7 @@ class EntryAdapter extends TypeAdapter<Entry> {
       title: fields[0] as String,
       date: fields[1] as DateTime,
       priority: fields[2] as int,
-      category: fields[3] as String,
+      category: fields[3] == null ? 'Other' : fields[3] as String,
       imagePath: fields[4] as String?,
     );
   }

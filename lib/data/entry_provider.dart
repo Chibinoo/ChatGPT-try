@@ -25,10 +25,12 @@ class EntryProvider extends ChangeNotifier {
   Future<void> init() async {
     _localBox = Hive.box<Entry>('entries');
     await loadEntries();
+    await loadNumberedItems();
 
     // auto refresh when login/logout
     FirebaseAuth.instance.authStateChanges().listen((user) async {
       await loadEntries();
+      await loadNumberedItems();
     });
   }
 
@@ -37,9 +39,9 @@ class EntryProvider extends ChangeNotifier {
     final settingsBox = Hive.box('settings');
     useCloud = settingsBox.get('useCloud', defaultValue: false);
     listEnabled = settingsBox.get('listEnabled', defaultValue: true);
-    numberedItems = (Hive.box('numberedList')
+    /*numberedItems = (Hive.box('numberedList')
             .get('items', defaultValue: <String>[]) as List)
-        .cast<String>();
+        .cast<String>();*/
   }
 
   void _saveSettings() {
@@ -49,7 +51,7 @@ class EntryProvider extends ChangeNotifier {
 
   // -------------------- CLOUD / LOCAL TOGGLE --------------------
 
-  Future<void> toggelStorage(bool value) async {
+  /*Future<void> toggelStorage(bool value) async {
     if (value && !useCloud) {
       await _mergeLocalToCloud();
     } else if (!value && useCloud) {
@@ -58,6 +60,20 @@ class EntryProvider extends ChangeNotifier {
     useCloud = value;
     _saveSettings();
     await loadEntries();
+    notifyListeners();
+  }*/
+    Future<void> toggelStorage(bool value)async{
+    if(value&&!useCloud){
+      await _mergeLocalToCloud();
+      await _mergeNumberedListLocalToCloud();
+    }else if(!value&&useCloud){
+      await _mergeCloudToLocal();
+      await _mergeNumberedListCloudToLocal();
+    }
+    useCloud=value;
+    _saveSettings();
+    await loadEntries();
+    await loadNumberedItems();
     notifyListeners();
   }
 
@@ -96,6 +112,45 @@ class EntryProvider extends ChangeNotifier {
       _entries = _localBox.values.toList();
     }
     notifyListeners();
+  }
+
+  // -------------------- LOAD NUMBERED LIST --------------------
+  DocumentReference<Map<String, dynamic>> _numberedListDoc(String uid){
+    return _firestore
+      .collection('users')
+      .doc(uid)
+      .collection('lists')
+      .doc('numberedList');
+  }
+
+  Future<void> loadNumberedItems()async {
+    if(useCloud){
+      final user=_auth.currentUser;
+      if(user==null){
+        numberedItems=[];
+        notifyListeners();
+        return;
+      }
+      final doc=await _numberedListDoc(user.uid).get();
+      final data=doc.data();
+      numberedItems=(data!=null&&data['items']is List)
+      ?List<String>.from(data['items'])
+      :<String>[];
+    }else{
+      numberedItems=(Hive.box('numberedList').get('items', defaultValue: <String>[]as List)
+      .cast<String>());
+    }
+    notifyListeners();
+  }
+
+  Future<void> _saveNumberedItemsToStore()async{
+    if(useCloud){
+      final user=_auth.currentUser;
+      if(user==null)return;
+      await _numberedListDoc(user.uid).set({'items':numberedItems});
+    }else{
+      Hive.box('numberedList').put('items', numberedItems);
+    }
   }
 
   // -------------------- CRUD OPERATIONS --------------------
@@ -348,7 +403,7 @@ class EntryProvider extends ChangeNotifier {
         e.date.day == entry.date.day);
   }
 
-  // -------------------- NUMBERED LIST --------------------
+  // -------------------- CRUD NUMBERED LIST --------------------
 
   void toggleListEnabel(bool value) {
     listEnabled = value;
@@ -356,7 +411,7 @@ class EntryProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateItem(int index, String value) {
+  /*void updateItem(int index, String value) {
     if (index >= 0 && index < numberedItems.length) {
       numberedItems[index] = value;
       Hive.box('numberedList').put('items', numberedItems);
@@ -387,6 +442,58 @@ class EntryProvider extends ChangeNotifier {
   void saveNumberedItems() {
     Hive.box('numberedList').put('items', numberedItems);
     notifyListeners();
+  }*/
+  Future<void>updateItem(int index, String value)async{
+    if(index>=0&&index<numberedItems.length){
+      numberedItems[index]=value;
+      await _saveNumberedItemsToStore();
+      notifyListeners();
+    }
+  }
+
+  Future<void> addItem()async{
+    numberedItems.add('');
+    await _saveNumberedItemsToStore();
+    notifyListeners();
+  }
+
+  Future<void> removeItem(int index)async{
+    numberedItems.removeAt(index);
+    await _saveNumberedItemsToStore();
+    notifyListeners();
+  }
+
+  Future<void> reorderItems(int oldIndex, int newIndex)async{
+    if(oldIndex<newIndex)newIndex-=1;
+    final item=numberedItems.removeAt(oldIndex);
+    numberedItems.insert(newIndex, item);
+    await _saveNumberedItemsToStore();
+    notifyListeners();
+  }
+
+  Future<void> saveNumberedItems()async{
+    await _saveNumberedItemsToStore();
+    notifyListeners();
+  }
+
+  Future<void> _mergeNumberedListLocalToCloud()async{
+    final user=_auth.currentUser;
+    if(user==null)return;
+    final doc=await _numberedListDoc(user.uid).get();
+    if(!doc.exists){
+      final localItems=(Hive.box('numberedList').get('items', defaultValue: <String>[]as List)
+      .cast<String>());
+    await _numberedListDoc(user.uid).set({'items':localItems});
+    }
+  }
+  Future<void>_mergeNumberedListCloudToLocal()async{
+    final user=_auth.currentUser;
+    if(user==null)return;
+    final doc=await _numberedListDoc(user.uid).get();
+    final data=doc.data();
+    if(data!=null&&data['items']is List){
+      Hive.box('numberedList').put('items', List<String>.from(data['items']));
+    }
   }
 
   // -------------------- AUTH LISTENER --------------------

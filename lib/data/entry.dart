@@ -13,7 +13,7 @@ class Entry {
   @HiveField(2)
   late int priority;
 
-  @HiveField(3)
+  @HiveField(3, defaultValue: 'Other')
   late String category;
 
   @HiveField(4)

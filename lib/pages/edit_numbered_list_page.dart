@@ -28,11 +28,13 @@ class _EditNumberedListPageState extends State<EditNumberedListPage> {
     super.dispose();
   }
 
-  void _save() {
+  Future<void> _save() async{
     final provider = Provider.of<EntryProvider>(context, listen: false);
     provider.numberedItems = _controllers.map((c) => c.text).toList();
-    provider.saveNumberedItems();
-    Navigator.of(context).pop();
+    await provider.saveNumberedItems();
+    if(mounted){
+      Navigator.of(context).pop();
+    }
   }
 
   void _addItem() {
