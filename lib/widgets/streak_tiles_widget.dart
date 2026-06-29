@@ -38,8 +38,8 @@ class StreakTilesWidget extends StatelessWidget {
                     height: 40,
                     decoration: BoxDecoration(
                       color: hasEntry
-                          ? colorScheme.secondaryContainer
-                          : colorScheme.secondary,
+                          ? colorScheme.tertiary
+                          : colorScheme.primary,
                       border: Border.all(
                         color: isToday ? colorScheme.secondary : Colors.transparent,
                         width: 2,
@@ -50,7 +50,7 @@ class StreakTilesWidget extends StatelessWidget {
                       child: Text(
                         DateFormat('E').format(day).substring(0, 1),
                         style: TextStyle(
-                          color: colorScheme.tertiary,
+                          color: colorScheme.secondaryContainer,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -61,7 +61,7 @@ class StreakTilesWidget extends StatelessWidget {
                     '${day.day}',
                     style: TextStyle(
                       fontSize: 12,
-                      color: colorScheme.tertiary,
+                      color: colorScheme.secondaryContainer,
                     ),
                   ),
                 ],

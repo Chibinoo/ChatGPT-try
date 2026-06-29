@@ -22,7 +22,8 @@ class _NavbarWidgetState extends State<NavbarWidget> {
           builder: (context, selectedPage, child) {
             return NavigationBar(
               indicatorColor: theme.colorScheme.secondaryContainer,
-              backgroundColor: theme.bottomNavigationBarTheme.backgroundColor, // <-- use this
+              //backgroundColor: theme.bottomNavigationBarTheme.backgroundColor, // <-- use this
+              backgroundColor: theme.colorScheme.primary,
               destinations: const [
                 NavigationDestination(icon: Icon(Icons.edit_note_sharp), label: 'Entries'),
                 NavigationDestination(icon: Icon(Icons.list), label: 'Stats'),

@@ -149,8 +149,8 @@ class _CalenderStreakWidgetState extends State<CalenderStreakWidget> {
                         '${day.day}',
                         style: TextStyle(
                           color: hasEntry
-                            ?theme.tertiary
-                            :theme.onSurface,
+                            ?theme.primary
+                            :theme.tertiary,
                           fontWeight: isToday?FontWeight.bold:FontWeight.normal,
                         ),
                       ),

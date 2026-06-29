@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_application_1/widgets/emotion_picker_widget.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
@@ -10,7 +11,7 @@ import 'package:flutter_application_1/themes/theme_provider.dart';
 import 'login_page.dart';
 
 class AddEntryPage extends StatefulWidget {
-  final Entry? existingEntry;//null if creating new
+  final Entry? existingEntry; //null if creating new
 
   const AddEntryPage({super.key, this.existingEntry});
 
@@ -19,37 +20,39 @@ class AddEntryPage extends StatefulWidget {
 }
 
 class _AddEntryPageState extends State<AddEntryPage> {
-  final TextEditingController _titleControler=TextEditingController();
-  double _priority=3;
-  String _category='Other';
+  final TextEditingController _titleControler = TextEditingController();
+  double _priority = 3;
+  String _category = 'Other';
   String? _imagePath;
+  String? _emotion;
 
   @override
   void initState() {
     super.initState();
-    if (widget.existingEntry!=null){
-      _titleControler.text=widget.existingEntry!.title;
-      _priority=widget.existingEntry!.priority.toDouble();
-      _category=widget.existingEntry!.category;
-      _imagePath=widget.existingEntry!.imagePath;
+    if (widget.existingEntry != null) {
+      _titleControler.text = widget.existingEntry!.title;
+      _priority = widget.existingEntry!.priority.toDouble();
+      _category = widget.existingEntry!.category;
+      _imagePath = widget.existingEntry!.imagePath;
+      _emotion=widget.existingEntry!.emotion;
     }
   }
 
-  Future<void>_pickImage(ImageSource source) async{
-    final picker=ImagePicker();
-    final pickedFile=await picker.pickImage(source: source);
-    if (pickedFile!=null){
+  Future<void> _pickImage(ImageSource source) async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: source);
+    if (pickedFile != null) {
       setState(() {
-        _imagePath=pickedFile.path;
+        _imagePath = pickedFile.path;
       });
     }
   }
 
   Future<void> _saveEntry() async {
     if (_titleControler.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Title cannot be empty')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Title cannot be empty')));
       return;
     }
 
@@ -61,7 +64,8 @@ class _AddEntryPageState extends State<AddEntryPage> {
         ..title = _titleControler.text
         ..priority = _priority.round()
         ..category = _category
-        ..imagePath = _imagePath;
+        ..imagePath = _imagePath
+        ..emotion=_emotion;
       await provider.updateEntry(widget.existingEntry!);
     } else {
       // Create new
@@ -71,33 +75,46 @@ class _AddEntryPageState extends State<AddEntryPage> {
         priority: _priority.round(),
         category: _category,
         imagePath: _imagePath,
+        emotion: _emotion,
       );
       await provider.addEntry(newEntry);
     }
+    //emotionPicker
+    final emotion = await Navigator.push<String>(
+      // ignore: use_build_context_synchronously
+      context,
+      MaterialPageRoute(builder: (_) => const EmotionPickerPage()),
+    );
+    if (emotion != null) {}
     // ignore: use_build_context_synchronously
     Navigator.pushReplacementNamed(context, '/main');
   }
 
-  Widget _buildCategorySelector(){
-    final categories =["Work","Hobby","Personal","Other"];
+  Widget _buildCategorySelector() {
+    final categories = ["Work", "Hobby", "Personal", "Other"];
+    final theme = Theme.of(context);
     return Wrap(
       spacing: 8,
-      children: categories.map((cat){
-        final isSelected=_category==cat;
+      children: categories.map((cat) {
+        final isSelected = _category == cat;
         return ChoiceChip(
-          label: Text(cat), 
+          label: Text(cat),
           selected: isSelected,
-          onSelected: (_)=>setState(()=>_category=cat),
-          );
+          labelStyle: TextStyle(color: isSelected? theme.colorScheme.primary
+                      : theme.colorScheme.tertiary,),
+          onSelected: (_) => setState(() => _category = cat),
+        );
       }).toList(),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-  final user = FirebaseAuth.instance.currentUser;
-  final theme = Theme.of(context);
-  final themeProvider = Provider.of<ThemeProvider>(context); // <-- Add this line
+    final user = FirebaseAuth.instance.currentUser;
+    final theme = Theme.of(context);
+    final themeProvider = Provider.of<ThemeProvider>(
+      context,
+    ); // <-- Add this line
 
     return Scaffold(
       appBar: AppBar(
@@ -122,46 +139,92 @@ class _AddEntryPageState extends State<AddEntryPage> {
             label: Text(
               user == null ? 'Login' : 'Logout',
               style: TextStyle(
-                color: themeProvider.isDarkMode ? Colors.white : Colors.black, // Use themeProvider here
+                color: themeProvider.isDarkMode
+                    ? Colors.white
+                    : Colors.black, // Use themeProvider here
               ),
             ),
-          )
+          ),
         ],
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16),
         child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              //Titel
-              TextField(
-                controller: _titleControler,
-                decoration: const InputDecoration(
-                  labelText: "Titel",
-                  border: OutlineInputBorder(),
-                ),
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            //Titel
+            TextField(
+              controller: _titleControler,
+              decoration: const InputDecoration(
+                labelText: "Titel",
+                border: OutlineInputBorder(),
               ),
-              const SizedBox(height: 20),
-              //Priority Slider
-              Text("Priority: ${_priority.round()}",
-                style: const TextStyle(fontWeight: FontWeight.bold)),
-              Slider(
-                value: _priority,
-                min: 1,
-                max: 5,
-                divisions: 4,
-                label: _priority.round().toString(), 
-                onChanged: (val)=>setState(()=>_priority=val),
-              ),
-              const SizedBox(height: 20),
-              //Category selector
-              const Text("Category",
-                style: TextStyle(fontWeight: FontWeight.bold)),
-              const SizedBox(height: 10),
-              _buildCategorySelector(),
-              const SizedBox(height: 20),
-              //Image picker
-              if (_imagePath!=null)
+            ),
+            const SizedBox(height: 20),
+            //Priority Slider
+            Text(
+              "Priority: ${_priority.round()}",
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Slider(
+              value: _priority,
+              min: 1,
+              max: 5,
+              divisions: 4,
+              label: _priority.round().toString(),
+              onChanged: (val) => setState(() => _priority = val),
+            ),
+            const SizedBox(height: 20),
+            //Category selector
+            const Text(
+              "Category",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            _buildCategorySelector(),
+            const SizedBox(height: 20),
+            //emotionPicker
+const SizedBox(height: 20),
+const Text(
+  "How are you feeling?",
+  style: TextStyle(fontWeight: FontWeight.bold),
+),
+const SizedBox(height: 10),
+GestureDetector(
+  onTap: () async {
+    final emotion = await Navigator.push<String>(
+      context,
+      MaterialPageRoute(builder: (_) => const EmotionPickerPage()),
+    );
+    if (emotion != null) {
+      setState(() => _emotion = emotion);
+    }
+  },
+  child: Container(
+    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+    decoration: BoxDecoration(
+      border: Border.all(color: Colors.grey),
+      borderRadius: BorderRadius.circular(8),
+    ),
+    child: Row(
+      children: [
+        const Icon(Icons.emoji_emotions_outlined),
+        const SizedBox(width: 12),
+        Text(
+          _emotion ?? 'Tap to select an emotion',
+          style: TextStyle(
+            color: _emotion != null ? null : Colors.grey,
+          ),
+        ),
+        const Spacer(),
+        if (_emotion != null)
+          const Icon(Icons.check_circle, color: Colors.green),
+      ],
+    ),
+  ),
+),
+            //Image picker
+            if (_imagePath != null)
               Center(
                 child: Image.file(
                   File(_imagePath!),
@@ -169,50 +232,50 @@ class _AddEntryPageState extends State<AddEntryPage> {
                   fit: BoxFit.cover,
                 ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                    onPressed: ()=>_pickImage(ImageSource.camera), 
-                    icon: const Icon(Icons.photo_camera)
-                  ),
-                  IconButton(
-                    onPressed: ()=>_pickImage(ImageSource.gallery), 
-                    icon: Icon(Icons.photo_library)
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              Center(
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: theme.colorScheme.secondaryContainer,
-                    foregroundColor: themeProvider.isDarkMode
-                        ? Colors.white
-                        : Colors.black,
-                  ),
-                  onPressed: _saveEntry,
-                  child: const Text('Save'),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  onPressed: () => _pickImage(ImageSource.camera),
+                  icon: const Icon(Icons.photo_camera),
                 ),
+                IconButton(
+                  onPressed: () => _pickImage(ImageSource.gallery),
+                  icon: Icon(Icons.photo_library),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Center(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.colorScheme.secondaryContainer,
+                  foregroundColor: themeProvider.isDarkMode
+                      ? theme.colorScheme.primary
+                      : theme.colorScheme.tertiary,
+                ),
+                onPressed: _saveEntry,
+                child: const Text('Save'),
               ),
-              const SizedBox(height: 10),
-              Center(
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: theme.colorScheme.secondaryContainer,
-                    foregroundColor: themeProvider.isDarkMode
-                        ? Colors.white
-                        : Colors.black,
-                  ),
-                  onPressed: (){
-                     Navigator.pushReplacementNamed(context, '/main');
-                  },
-                  child: const Text('Cancel'),
-                )
-              )
-            ],
-          ),
+            ),
+            const SizedBox(height: 10),
+            Center(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.colorScheme.secondaryContainer,
+                  foregroundColor: themeProvider.isDarkMode
+                      ? theme.colorScheme.primary
+                      : theme.colorScheme.tertiary,
+                ),
+                onPressed: () {
+                  Navigator.pushReplacementNamed(context, '/main');
+                },
+                child: const Text('Cancel'),
+              ),
+            ),
+          ],
         ),
-      );
+      ),
+    );
   }
 }

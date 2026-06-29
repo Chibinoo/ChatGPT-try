@@ -17,7 +17,7 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   final user = FirebaseAuth.instance.currentUser;
-  bool _isUploading=false;
+  bool _isUploading = false;
 
   Future<void> _pickAndUploadProfilePhoto() async {
     final picker = ImagePicker();
@@ -25,39 +25,40 @@ class _SettingsPageState extends State<SettingsPage> {
     if (picked == null) return;
     final file = File(picked.path);
     await user?.updatePhotoURL(file.path);
-    setState(() =>_isUploading=true);
+    setState(() => _isUploading = true);
 
-    try{
-      final file=File(picked.path);
-      final storageRef=FirebaseStorage.instance
-        .ref()
-        .child('user_profile_photo/${user!.uid}.jpeg');
+    try {
+      final file = File(picked.path);
+      final storageRef = FirebaseStorage.instance.ref().child(
+        'user_profile_photo/${user!.uid}.jpeg',
+      );
 
       //Upload image
       await storageRef.putFile(file);
 
       //Get download URL
-      final downloadUrl=await storageRef.getDownloadURL();
+      final downloadUrl = await storageRef.getDownloadURL();
 
       //Update user profile
       await user!.updatePhotoURL(downloadUrl);
       await user!.reload();
 
       setState(() {
-        _isUploading=false;
+        _isUploading = false;
       });
 
-      if(mounted){
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Profile photo updated!')),
-        );
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Profile photo updated!')));
       }
-    }catch(e){
-      setState(()=>_isUploading=false);
+    } catch (e) {
+      setState(() => _isUploading = false);
       // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to upload photo: $e')),
-      );
+      ScaffoldMessenger.of(
+        // ignore: use_build_context_synchronously
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to upload photo: $e')));
     }
   }
 
@@ -72,58 +73,54 @@ class _SettingsPageState extends State<SettingsPage> {
     }
   }
 
-  Future<void>_changeName()async{
-    final user=FirebaseAuth.instance.currentUser;
-    if(user==null)return;
+  Future<void> _changeName() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
 
-    final controller=TextEditingController();
-    final newName=await showDialog<String>
-    (
-      context: context, 
-      builder: (context){
+    final controller = TextEditingController();
+    final newName = await showDialog<String>(
+      context: context,
+      builder: (context) {
         return AlertDialog(
           title: const Text("Change Username"),
           content: TextField(
             controller: controller,
-            decoration: InputDecoration(
-              labelText: "New Username",
-            ),
+            decoration: InputDecoration(labelText: "New Username"),
           ),
           actions: [
             TextButton(
-              onPressed: ()=>Navigator.pop(context), 
+              onPressed: () => Navigator.pop(context),
               child: const Text("Cancel"),
-              ),
+            ),
             ElevatedButton(
-              onPressed: ()=>Navigator.pop(context, controller.text), 
-              child: const Text("Save")
-            )
+              onPressed: () => Navigator.pop(context, controller.text),
+              child: const Text("Save"),
+            ),
           ],
         );
       },
     );
-    if(newName==null||newName.isEmpty)return;
+    if (newName == null || newName.isEmpty) return;
 
     await user.updateDisplayName(newName);
     await user.reload();
 
-    // ignore: use_build_context_synchronously
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content:Text("Username updated")),
-      );
+    ScaffoldMessenger.of(
+      // ignore: use_build_context_synchronously
+      context,
+    ).showSnackBar(const SnackBar(content: Text("Username updated")));
   }
 
-  Future<void>_changeMail()async{
-    final user=FirebaseAuth.instance.currentUser;
-    if(user==null)return;
+  Future<void> _changeMail() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
 
-    final emailController=TextEditingController();
-    final passwordController=TextEditingController();
+    final emailController = TextEditingController();
+    final passwordController = TextEditingController();
 
-    final result=await showDialog<Map<String, String>>
-    (
-      context: context, 
-      builder: (context){
+    final result = await showDialog<Map<String, String>>(
+      context: context,
+      builder: (context) {
         return AlertDialog(
           title: const Text("Change Email"),
           content: Column(
@@ -142,14 +139,15 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
           actions: [
             TextButton(
-              onPressed: ()=>Navigator.pop(context), 
+              onPressed: () => Navigator.pop(context),
               child: const Text("Cancel"),
             ),
             ElevatedButton(
-              onPressed: (){Navigator.pop(context, {
-                "email":emailController.text,
-                "password":passwordController.text
-              });
+              onPressed: () {
+                Navigator.pop(context, {
+                  "email": emailController.text,
+                  "password": passwordController.text,
+                });
               },
               child: const Text("Update"),
             ),
@@ -157,9 +155,9 @@ class _SettingsPageState extends State<SettingsPage> {
         );
       },
     );
-    if(result==null)return;
+    if (result == null) return;
 
-    try{
+    try {
       final credential = EmailAuthProvider.credential(
         email: user.email!,
         password: result["password"]!,
@@ -172,11 +170,11 @@ class _SettingsPageState extends State<SettingsPage> {
       // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Email Updated Succsecfully")),
-        );
-    }on FirebaseAuthException catch(e){
+      );
+    } on FirebaseAuthException catch (e) {
       // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.message??"Error Updating Email")),
+        SnackBar(content: Text(e.message ?? "Error Updating Email")),
       );
     }
   }
@@ -189,7 +187,17 @@ class _SettingsPageState extends State<SettingsPage> {
     final user = FirebaseAuth.instance.currentUser;
 
     return Scaffold(
-      appBar: AppBar(title: Text('Settings', style: TextStyle(fontSize: 25))),
+      appBar: AppBar(
+        title: Text(
+          'Settings',
+          style: TextStyle(
+            fontSize: 25,
+            fontWeight: FontWeight.bold,
+            color: colorScheme.secondaryContainer,
+          ),
+        ),
+        backgroundColor: colorScheme.primary,
+      ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Consumer<EntryProvider>(
@@ -198,6 +206,7 @@ class _SettingsPageState extends State<SettingsPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  const SizedBox(height: 10),
                   Text(
                     'Account',
                     style: TextStyle(
@@ -208,80 +217,105 @@ class _SettingsPageState extends State<SettingsPage> {
                   ),
                   const SizedBox(height: 10),
                   if (user != null) ...[
-                    Center(
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              Column(
-                                children: [
-                                  Text(
-                                    user.displayName ?? 'Anonymous User',
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 6),
-                                  Text(
-                                    user.email ?? '',
-                                    style: const TextStyle(color: Colors.grey),
-                                  ),
-                                ],
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              user.displayName ?? 'Anonymous User',
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
                               ),
-                              Spacer(),
-                              CircleAvatar(
-                                radius: 25,
-                                backgroundImage: user.photoURL != null
-                                  ? NetworkImage(user.photoURL!)
-                                  : const AssetImage('assets/images/default_avatar.png')
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              user.email ?? '',
+                              style: const TextStyle(color: Colors.grey),
+                            ),
+                          ],
+                        ),
+                        Spacer(),
+                        CircleAvatar(
+                          radius: 25,
+                          backgroundImage: user.photoURL != null
+                              ? NetworkImage(user.photoURL!)
+                              : const AssetImage(
+                                      'assets/images/default_avatar.png',
+                                    )
                                     as ImageProvider,
-                              ),
-                              if(_isUploading)
-                                const CircularProgressIndicator(color: Colors.white),
-                              const SizedBox(height: 10),
-                            ],
+                        ),
+                        if (_isUploading)
+                          const CircularProgressIndicator(color: Colors.white),
+                        const SizedBox(height: 10),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        ElevatedButton.icon(
+                          onPressed: _isUploading
+                              ? null
+                              : _pickAndUploadProfilePhoto,
+                          icon: Icon(
+                            Icons.photo_camera,
+                            color: colorScheme.tertiary,
                           ),
-                          const SizedBox(height: 16),
-                          Row(
-                            children: [
-                              ElevatedButton.icon(
-                                onPressed: _isUploading?null:_pickAndUploadProfilePhoto,
-                                icon: Icon(Icons.photo_camera, color: colorScheme.tertiary),
-                                label: Text('Change Photo',style: TextStyle(color: colorScheme.tertiary)),
-                              ),
-                              Spacer(),
-                              ElevatedButton.icon(
-                                onPressed: _resetPassword,
-                                icon: Icon(Icons.lock_reset, color: colorScheme.tertiary),
-                                label: Text('Reset Password',style: TextStyle(color: colorScheme.tertiary)),
-                              ),
-                            ],
+                          label: Text(
+                            'Change Photo',
+                            style: TextStyle(color: colorScheme.tertiary),
                           ),
-                           const SizedBox(height: 16),
-                          Row(
-                            children: [
-                              ElevatedButton.icon(
-                                onPressed:()=>_changeName(),
-                                icon: Icon(Icons.edit, color: colorScheme.tertiary),
-                                label: Text('Change Username',style: TextStyle(color: colorScheme.tertiary)),
-                              ),
-                              Spacer(),
-                              ElevatedButton.icon(
-                                onPressed: ()=>_changeMail(),
-                                icon: Icon(Icons.mail_outline, color: colorScheme.tertiary),
-                                label: Text('Change Email',style: TextStyle(color: colorScheme.tertiary)),
-                              ),
-                            ],
+                        ),
+                        Spacer(),
+                        ElevatedButton.icon(
+                          onPressed: _resetPassword,
+                          icon: Icon(
+                            Icons.lock_reset,
+                            color: colorScheme.tertiary,
                           ),
-                        ],
-                      ),
+                          label: Text(
+                            'Reset Password',
+                            style: TextStyle(color: colorScheme.tertiary),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        ElevatedButton.icon(
+                          onPressed: () => _changeName(),
+                          icon: Icon(Icons.edit, color: colorScheme.tertiary),
+                          label: Text(
+                            'Change Username',
+                            style: TextStyle(color: colorScheme.tertiary),
+                          ),
+                        ),
+                        Spacer(),
+                        ElevatedButton.icon(
+                          onPressed: () => _changeMail(),
+                          icon: Icon(
+                            Icons.mail_outline,
+                            color: colorScheme.tertiary,
+                          ),
+                          label: Text(
+                            'Change Email',
+                            style: TextStyle(color: colorScheme.tertiary),
+                          ),
+                        ),
+                      ],
                     ),
                   ] else ...[
                     Center(
                       child: Column(
                         children: const [
-                          Icon(Icons.person_outline, size: 80, color: Colors.grey),
+                          Icon(
+                            Icons.person_outline,
+                            size: 80,
+                            color: Colors.grey,
+                          ),
                           SizedBox(height: 10),
                           Text(
                             "You're not signed in",
@@ -318,6 +352,25 @@ class _SettingsPageState extends State<SettingsPage> {
                       fontWeight: FontWeight.bold,
                       color: colorScheme.secondaryContainer,
                     ),
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      const Text('Color Theme'),
+                      const Spacer(),
+                      DropdownButton<AppThemePreset>(
+                        value: themeProvider.preset,
+                        onChanged: (preset) {
+                          if (preset != null) themeProvider.setPreset(preset);
+                        },
+                        items: AppThemePreset.values.map((preset) {
+                          return DropdownMenuItem(
+                            value: preset,
+                            child: Text(preset.label),
+                          );
+                        }).toList(),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 10),
                   Row(
@@ -370,7 +423,8 @@ class _SettingsPageState extends State<SettingsPage> {
                                 ),
                                 actions: [
                                   TextButton(
-                                    onPressed: () => Navigator.of(ctx).pop(true),
+                                    onPressed: () =>
+                                        Navigator.of(ctx).pop(true),
                                     child: const Text('Delete Cloud Data'),
                                   ),
                                 ],
@@ -411,101 +465,124 @@ class _SettingsPageState extends State<SettingsPage> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  ElevatedButton.icon(
-                    icon: const Icon(Icons.delete_forever),
-                    label: const Text('Delete All Entries'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.grey.shade200,
-                      foregroundColor: Colors.red,
-                    ),
-                    onPressed: () async {
-                      final confirm = await showDialog<bool>(
-                        context: context,
-                        builder: (ctx) => AlertDialog(
-                          title: const Text('Confirm Deletion'),
-                          content: const Text(
-                            'Are you sure you want to delete ALL entries?',
+                  IntrinsicWidth(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        ElevatedButton.icon(
+                          icon: const Icon(Icons.delete_forever),
+                          label: Text(
+                            'Delete All Entries',
+                            style: TextStyle(color: colorScheme.tertiary),
                           ),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.of(ctx).pop(false),
-                              child: const Text('Cancel'),
-                            ),
-                            ElevatedButton(
-                              onPressed: () => Navigator.of(ctx).pop(true),
-                              child: const Text('Delete'),
-                            ),
-                          ],
-                        ),
-                      );
-                      if (confirm == true) {
-                        provider.clearAllEntries();
-                        // ignore: use_build_context_synchronously
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('All entries have been deleted'),
-                          ),
-                        );
-                      }
-                    },
-                  ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.grey.shade200,
-                      foregroundColor: Colors.red,
-                    ),
-                    onPressed: () async {
-                      await entryProvider.loadEntries();
-                      // ignore: use_build_context_synchronously
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Streak reloaded!')),
-                      );
-                    },
-                    child: const Text('Reload Streak Widget'),
-                  ),
-                  Row(
-                    children: [
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.grey.shade200,
-                          foregroundColor: Colors.red,
-                        ),
-                        onPressed: () async {
-                          final provider = context.read<EntryProvider>();
-                          final date = await showDatePicker(
-                            context: context,
-                            initialDate: provider.currentTime,
-                            firstDate: DateTime(2020),
-                            lastDate: DateTime(2030),
-                          );
-                          if (date != null) {
-                            final time = await showTimePicker(
-                              // ignore: use_build_context_synchronously
+                          /*style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.grey.shade200,
+                            backgroundColor: Color.fromARGB(255, 26, 37, 33),
+                          ),*/
+                          onPressed: () async {
+                            final confirm = await showDialog<bool>(
                               context: context,
-                              initialTime: TimeOfDay.fromDateTime(provider.currentTime),
+                              builder: (ctx) => AlertDialog(
+                                title: const Text('Confirm Deletion'),
+                                content: const Text(
+                                  'Are you sure you want to delete ALL entries?',
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.of(ctx).pop(false),
+                                    child: const Text('Cancel'),
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: () =>
+                                        Navigator.of(ctx).pop(true),
+                                    child: const Text('Delete'),
+                                  ),
+                                ],
+                              ),
                             );
-                            final newDateTime = DateTime(
-                              date.year,
-                              date.month,
-                              date.day,
-                              time?.hour ?? 0,
-                              time?.minute ?? 0,
-                            );
-                            provider.setMockDate(newDateTime);
-                          }
-                        },
-                        child: const Text('Set Mock Date/Time'),
-                      ),
-                      const Spacer(),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.grey.shade200,
-                          foregroundColor: Colors.red,
+                            if (confirm == true) {
+                              provider.clearAllEntries();
+                              // ignore: use_build_context_synchronously
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                    'All entries have been deleted',
+                                  ),
+                                ),
+                              );
+                            }
+                          },
                         ),
-                        onPressed: () => context.read<EntryProvider>().clearMockDate(),
-                        child: const Text('Reset to Real Time'),
-                      ),
-                    ],
+                        ElevatedButton(
+                          /*style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.grey.shade200,
+                            backgroundColor: Color.fromARGB(255, 26, 37, 33),
+                          ),*/
+                          onPressed: () async {
+                            await entryProvider.loadEntries();
+                            // ignore: use_build_context_synchronously
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Streak reloaded!')),
+                            );
+                          },
+                          child: Text(
+                            'Reload Streak Widget',
+                            style: TextStyle(color: colorScheme.tertiary),
+                          ),
+                        ),
+                        ElevatedButton(
+                          /*style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.grey.shade200,
+                            backgroundColor: Color.fromARGB(255, 26, 37, 33),
+                          ),*/
+                          onPressed: () async {
+                            final provider = context.read<EntryProvider>();
+                            final date = await showDatePicker(
+                              context: context,
+                              initialDate: provider.currentTime,
+                              firstDate: DateTime(2020),
+                              lastDate: DateTime(2030),
+                            );
+                            if (date != null) {
+                              final time = await showTimePicker(
+                                // ignore: use_build_context_synchronously
+                                context: context,
+                                initialTime: TimeOfDay.fromDateTime(
+                                  provider.currentTime,
+                                ),
+                              );
+                              final newDateTime = DateTime(
+                                date.year,
+                                date.month,
+                                date.day,
+                                time?.hour ?? 0,
+                                time?.minute ?? 0,
+                              );
+                              provider.setMockDate(newDateTime);
+                            }
+                          },
+                          child: Text(
+                            'Set Mock Date/Time',
+                            style: TextStyle(color: colorScheme.tertiary),
+                          ),
+                        ),
+
+                        ElevatedButton(
+                          /*style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.grey.shade200,
+                            backgroundColor: Color.fromARGB(255, 26, 37, 33),
+                          ),*/
+                          onPressed: () =>
+                              context.read<EntryProvider>().clearMockDate(),
+                          child: Text(
+                            'Reset to Real Time',
+                            style: TextStyle(color: colorScheme.tertiary),
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                      ],
+                    ),
                   ),
                 ],
               ),

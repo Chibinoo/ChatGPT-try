@@ -19,12 +19,16 @@ class Entry {
   @HiveField(4)
   String? imagePath;
 
+  @HiveField(5)
+  String? emotion;
+
   Entry({
     required this.title,
     required this.date,
     required this.priority,
     this.category = 'Other',
     this.imagePath,
+    this.emotion,
   });
 
   /// ✅ Convert to Firestore-safe map
@@ -35,6 +39,7 @@ class Entry {
       'date': date.toIso8601String(),
       'category': category,
       'image': imagePath, // ✅ match provider field name
+      'emotion': emotion,
     };
   }
 
@@ -48,6 +53,7 @@ class Entry {
     priority: map['priority'] ?? 1,
     category: map['category'] ?? 'Other',
     imagePath: map['imagePath'],
+    emotion: map['emotion'],
   );
 }
 

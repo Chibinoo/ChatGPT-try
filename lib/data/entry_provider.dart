@@ -50,18 +50,6 @@ class EntryProvider extends ChangeNotifier {
   }
 
   // -------------------- CLOUD / LOCAL TOGGLE --------------------
-
-  /*Future<void> toggelStorage(bool value) async {
-    if (value && !useCloud) {
-      await _mergeLocalToCloud();
-    } else if (!value && useCloud) {
-      await _mergeCloudToLocal();
-    }
-    useCloud = value;
-    _saveSettings();
-    await loadEntries();
-    notifyListeners();
-  }*/
     Future<void> toggelStorage(bool value)async{
     if(value&&!useCloud){
       await _mergeLocalToCloud();
@@ -78,7 +66,6 @@ class EntryProvider extends ChangeNotifier {
   }
 
   // -------------------- LOAD ENTRIES --------------------
-
   Future<void> loadEntries() async {
     if (useCloud) {
       final user = FirebaseAuth.instance.currentUser;
@@ -154,7 +141,6 @@ class EntryProvider extends ChangeNotifier {
   }
 
   // -------------------- CRUD OPERATIONS --------------------
-
   Future<void> addEntry(Entry entry) async {
     if (useCloud) {
       final user = FirebaseAuth.instance.currentUser;
@@ -241,7 +227,6 @@ class EntryProvider extends ChangeNotifier {
   }
 
   // -------------------- DATA SYNC HELPERS --------------------
-
   Future<void> _mergeLocalToCloud() async {
     if (_auth.currentUser == null) return;
 
@@ -339,7 +324,6 @@ class EntryProvider extends ChangeNotifier {
   }
 
   // -------------------- STREAK SYSTEM --------------------
-
   int get streakCount {
     if (entries.isEmpty) return 0;
 
@@ -394,7 +378,6 @@ class EntryProvider extends ChangeNotifier {
   }
 
   // -------------------- HELPER FUNCTIONS --------------------
-
   bool _containsEntry(List<Entry> list, Entry entry) {
     return list.any((e) =>
         e.title == entry.title &&
@@ -404,45 +387,12 @@ class EntryProvider extends ChangeNotifier {
   }
 
   // -------------------- CRUD NUMBERED LIST --------------------
-
   void toggleListEnabel(bool value) {
     listEnabled = value;
     Hive.box('settings').put('listEnabled', value);
     notifyListeners();
   }
 
-  /*void updateItem(int index, String value) {
-    if (index >= 0 && index < numberedItems.length) {
-      numberedItems[index] = value;
-      Hive.box('numberedList').put('items', numberedItems);
-      notifyListeners();
-    }
-  }
-
-  void addItem() {
-    numberedItems.add('');
-    Hive.box('numberedList').put('items', numberedItems);
-    notifyListeners();
-  }
-
-  void removeItem(int index) {
-    numberedItems.removeAt(index);
-    Hive.box('numberedList').put('items', numberedItems);
-    notifyListeners();
-  }
-
-  void reorderItems(int oldIndex, int newIndex) {
-    if (oldIndex < newIndex) newIndex -= 1;
-    final item = numberedItems.removeAt(oldIndex);
-    numberedItems.insert(newIndex, item);
-    Hive.box('numberedList').put('items', numberedItems);
-    notifyListeners();
-  }
-
-  void saveNumberedItems() {
-    Hive.box('numberedList').put('items', numberedItems);
-    notifyListeners();
-  }*/
   Future<void>updateItem(int index, String value)async{
     if(index>=0&&index<numberedItems.length){
       numberedItems[index]=value;
@@ -486,6 +436,7 @@ class EntryProvider extends ChangeNotifier {
     await _numberedListDoc(user.uid).set({'items':localItems});
     }
   }
+
   Future<void>_mergeNumberedListCloudToLocal()async{
     final user=_auth.currentUser;
     if(user==null)return;
@@ -497,7 +448,6 @@ class EntryProvider extends ChangeNotifier {
   }
 
   // -------------------- AUTH LISTENER --------------------
-
   void listenToAuthChanges(BuildContext context) {
     _auth.authStateChanges().listen((user) async {
       if (user != null) {
@@ -517,7 +467,6 @@ class EntryProvider extends ChangeNotifier {
   }
 
   // -------------------- MOCK TIME SYSTEM --------------------
-
   DateTime? mockNow;
 
   DateTime get currentTime => mockNow ?? DateTime.now();

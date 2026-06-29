@@ -75,7 +75,15 @@ class _SortedPageState extends State<SortedPage> {
 
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Sorted Entries', style: TextStyle(fontSize: 25)),
+            title: Text(
+              'Sorted Entries',
+              style: TextStyle(
+                fontSize: 25,
+                fontWeight: FontWeight.bold,
+                color: theme.colorScheme.secondaryContainer,
+              ),
+            ),
+            backgroundColor: theme.colorScheme.primary,
             actions: [
               IconButton(
                 icon: Icon(Icons.add),
@@ -85,14 +93,16 @@ class _SortedPageState extends State<SortedPage> {
                     MaterialPageRoute(builder: (context) => AddEntryPage()),
                   );
                 },
-              )
-            ]
+              ),
+            ],
           ),
           body: SingleChildScrollView(
             child: Column(
               children: [
+                const SizedBox(height: 20),
                 StreakTilesWidget(),
-                const SizedBox(height: 5),
+                //category filter selector
+                /*const SizedBox(height: 5),
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -109,12 +119,14 @@ class _SortedPageState extends State<SortedPage> {
                             setState(() => _selectedCategory = cat);
                           },
                           backgroundColor: theme.chipTheme.backgroundColor,
-                          labelStyle: theme.chipTheme.labelStyle,
+                          labelStyle: TextStyle(
+                            color: theme.colorScheme.tertiary,
+                          ),
                         ),
                       );
                     }).toList(),
                   ),
-                ),
+                ),*/
                 const SizedBox(height: 10),
                 Row(
                   children: [

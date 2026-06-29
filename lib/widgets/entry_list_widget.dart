@@ -72,7 +72,7 @@ class EntryListWidget extends StatelessWidget {
                 : const Icon(Icons.image_not_supported),
             title: Text(entry.title),
             subtitle: Text(
-              'Priority: ${entry.priority}\n${entry.category}\n${entry.date.toLocal()}',
+              'Priority: ${entry.priority}\n${entry.emotion}\n${entry.date.toLocal()}',
             ),
           ),
         );

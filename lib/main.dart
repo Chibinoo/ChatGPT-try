@@ -37,14 +37,14 @@ void main() async{
   // Initialize provider
   final entryProvider = EntryProvider();
   await entryProvider.init();
+  final themeProvider=ThemeProvider()..loadFromHive();
 
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-          create: (_)=>EntryProvider()..init(),
-        ),
-        ChangeNotifierProvider.value(value: ThemeProvider())
+        ChangeNotifierProvider(create: (_)=>themeProvider),
+        ChangeNotifierProvider(create: (_)=>EntryProvider()..init()),
+        //ChangeNotifierProvider.value(value: ThemeProvider())
       ],
       child: const MyApp(),
     ),

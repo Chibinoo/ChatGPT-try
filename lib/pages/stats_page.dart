@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/data/entry_provider.dart';
 import 'package:flutter_application_1/widgets/calender_streak_widget.dart';
 import 'package:flutter_application_1/widgets/streak_widget.dart';
+//import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../data/entry.dart';
@@ -12,6 +13,7 @@ class StatsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final entries = Provider.of<EntryProvider>(context).entries;
+    final colorScheme = Theme.of(context).colorScheme;
 
     //count priorities
     Map<int, int> priorityCount = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0};
@@ -26,7 +28,13 @@ class StatsPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Statistics', style: TextStyle(fontSize: 25)),
+        title: Text('Statistics', style: TextStyle(
+                fontSize: 25,
+                fontWeight: FontWeight.bold,
+                color: colorScheme.secondaryContainer,
+              ),
+            ),
+            backgroundColor: colorScheme.primary,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
